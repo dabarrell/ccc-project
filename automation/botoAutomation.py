@@ -31,8 +31,7 @@ for i in res.instances:
 
     vol = conn.get_all_volumes([vol.id])[0]
     if vol.status == 'available':
-        print()
-        conn.attach_volume(vol.id, i.id, "/dev/sdx")
+        conn.attach_volume(vol.id, i.id, '/dev/vdc')
         print('Attached')
     else:
         print('Not available')
