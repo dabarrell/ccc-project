@@ -1,18 +1,21 @@
 import boto
 import time
+import paramiko
+import os
+from deploy import deploy
 from boto.ec2.regioninfo import RegionInfo
 
 
 def main():
     global ec2
     ec2 = create_connection()
-    print('Connection to NeCTAR established\n')
-    instances = create_instances(1)
+    print('------ Connection to NeCTAR established ------\n')
+    instances = create_instances(2)
 
     for i in instances:
         print(i.id + ':' + i.state)
 
-    print('\nAttaching volumes')
+    print('\n------ Attaching volumes ------')
     cont = False
     while not cont:
         cont = True
@@ -27,13 +30,25 @@ def main():
             else:
                 cont = False
         if cont is False:
-            print('Instance(s) still pending - waiting 15 seconds')
+            print('Instance(s) still spawning - waiting 15 seconds\n')
             time.sleep(15)
 
-    print('\nIP addresses')
+    print('\n------ IP addresses ------')
+    hosts = []
     for i in instances:
         i.update()
         print(i.id + ':' + i.private_ip_address)
+        hosts.append(i.private_ip_address)
+
+    print('\n------ Checking SSH ------')
+    while True:
+        if check_ssh(hosts) is True:
+            break
+        print('SSH not yet active on all instances - waiting 15 seconds\n')
+        time.sleep(15)
+
+    print('\nDeploying to ' + str(hosts))
+    deploy(hosts)
 
 
 def create_connection():
@@ -76,6 +91,29 @@ def print_instances():
     instances = get_instances()
     for i in instances:
         print(i.id + ':' + i.state)
+
+
+class MissingKeyPolicy(paramiko.client.AutoAddPolicy):
+    def missing_host_key(self, client, hostname, key):
+        with open(os.path.expanduser('~/.ssh/known_hosts'), 'a') as f:
+            f.write('%s %s %s\n' % (hostname, 'ssh-rsa', key.get_base64()))
+        super(MissingKeyPolicy, self).missing_host_key(client, hostname, key)
+
+
+def check_ssh(hosts):
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(MissingKeyPolicy())
+    client.load_system_host_keys()
+    res = True
+    for h in hosts:
+        try:
+            client.connect(h, username='ubuntu', key_filename='/Users/david/.ssh/ccc-project')
+            client.close()
+            print('Connection to ' + h + ' successful')
+        except paramiko.ssh_exception.NoValidConnectionsError:
+            print('Unable to connect to ' + h)
+            res = False
+    return res
 
 
 if __name__ == '__main__':main()
