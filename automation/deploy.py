@@ -10,7 +10,7 @@ from boto.ec2.regioninfo import RegionInfo
 num_of_instances = 1
 instance_type = 'm1.medium'
 volume_size = 50
-playbook_file_name = 'playbook.yml'
+playbook_file_name = 'playbook/playbook.yml'
 
 aws_access_key_id = '3161434dc53f435b81132e9743f8bdad'
 aws_secret_access_key = 'bf6dd7caf81f44719a5a28a7201bf007'
