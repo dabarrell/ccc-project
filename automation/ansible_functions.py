@@ -1,16 +1,13 @@
-import json
-import sys
 import os
-from pprint import pprint
-from collections import namedtuple
 from tempfile import NamedTemporaryFile
 from ansible.parsing.dataloader import DataLoader
 from ansible.vars import VariableManager
 from ansible.inventory import Inventory
-from ansible.playbook.play import Play
-from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.executor.playbook_executor import PlaybookExecutor
 from ansible.plugins.callback.default import CallbackModule
+
+private_key_file = os.getenv('CCC_PRIVATE_KEY') or os.path.expanduser('~/.ssh/ccc-project')
+
 
 class Options(object):
     """
@@ -66,6 +63,7 @@ class Options(object):
         self.listtags = listtags
         self.module_path = module_path
 
+
 class ResultCallback(CallbackModule):
     """A sample callback plugin used for performing an action as results come in
 
@@ -82,11 +80,12 @@ class ResultCallback(CallbackModule):
         # print(json.dumps({host.name: result._result}, indent=4))
         super(ResultCallback, self).v2_runner_on_ok(result)
 
-def runPlaybook(hosts):
+
+def runPlaybook(hosts, playbook, private_key_file=private_key_file):
     variable_manager = VariableManager()
     loader = DataLoader()
 
-    options = Options(connection='ssh', private_key_file='/Users/david/.ssh/ccc-project', module_path='', forks=100, become=True, become_method='sudo', become_user='root', check=False)
+    options = Options(connection='ssh', private_key_file=private_key_file, module_path='', forks=100, become=True, become_method='sudo', become_user='root', check=False)
     passwords = dict(vault_pass='')
 
     results_callback = ResultCallback()
@@ -99,45 +98,6 @@ def runPlaybook(hosts):
 
     inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list=host_file.name)
     variable_manager.set_inventory(inventory)
-
-    # # create play with tasks
-    # play_source =  dict(
-    #         name = 'CCC Deploy',
-    #         hosts = 'servers',
-    #         remote_user = 'ubuntu',
-    #         gather_facts = 'no',
-    #         tasks = [
-    #             dict(name="Run a command",
-    #                          action=dict(module="command", args="touch /home/ubuntu/asdfdasdf"),
-    #                          register="output"),
-    #             dict(name='Install package',
-    #                  action=dict(module='apt', args=dict('')))
-    #             dict(action=dict(module='shell', args='ls'), register='shell_out'),
-    #             dict(action=dict(module='debug', args=dict(msg='{{shell_out.stdout}}')))
-    #          ]
-    #     )
-    # play = Play().load(play_source, variable_manager=variable_manager, loader=loader)
-
-    # actually run it
-    # tqm = None
-    # try:
-    #     tqm = TaskQueueManager(
-    #               inventory=inventory,
-    #               variable_manager=variable_manager,
-    #               loader=loader,
-    #               options=options,
-    #               passwords=passwords,
-    #               stdout_callback=results_callback
-    #           )
-    #     result = tqm.run(play)
-    #     pprint(result)
-    # finally:
-    #     if tqm is not None:
-    #         tqm.cleanup()
-    #     os.remove(host_file.name)
-
-    pb_dir = os.path.dirname(os.path.abspath(__file__))
-    playbook = "%s/%s" % (pb_dir, 'playbook.yml')
 
     pbex = PlaybookExecutor(
         playbooks=[playbook],
