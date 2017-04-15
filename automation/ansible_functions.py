@@ -1,4 +1,5 @@
 import os
+import json
 from tempfile import NamedTemporaryFile
 from ansible.parsing.dataloader import DataLoader
 from ansible.vars import VariableManager
@@ -80,6 +81,11 @@ class ResultCallback(CallbackModule):
         # print(json.dumps({host.name: result._result}, indent=4))
         super(ResultCallback, self).v2_runner_on_ok(result)
 
+    def v2_runner_on_failed(self, result, ignore_errors=False):
+        host = result._host
+        print(json.dumps({host.name: result._result}, indent=4))
+        super(ResultCallback, self).v2_runner_on_failed(result, ignore_errors)
+
 
 def runPlaybook(hosts, playbook, private_key_file=private_key_file):
     variable_manager = VariableManager()
@@ -132,3 +138,7 @@ def runPlaybook(hosts, playbook, private_key_file=private_key_file):
     except KeyError:
         out = 'Unrecognised error code'
     return result, out
+
+if __name__ == '__main__':
+    runPlaybook(['115.146.88.201', '115.146.88.204'],
+                '/Users/david/Workspace/uni/CCC/ccc-project/automation/playbook/playbook.yml')

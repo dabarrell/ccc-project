@@ -1,0 +1,4 @@
+#!/bin/sh
+export HOME=/home/ubuntu
+exec 2>&1
+exec chpst -u ubuntu {{ couchdb_install_dir }}/bin/couchdb
