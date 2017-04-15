@@ -4,10 +4,13 @@
 ; in default.ini, but unlike changes made to default.ini, this file won't be
 ; overwritten on server upgrade.
 
+
 [couchdb]
 ;max_document_size = 4294967296 ; bytes
 ;os_process_timeout = 5000
 uuid = ee0ca2ab22403572ad69e6ad1a688e46
+database_dir = /mnt/couchdb/data
+view_index_dir = /mnt/couchdb/data
 
 [couch_peruser]
 ; If enabled, couch_peruser ensures that a private per-user database
@@ -112,4 +115,4 @@ bind_address = 0.0.0.0
 ; 'username = password' lines. Don't forget to restart CouchDB after
 ; changing this.
 [admins]
-admin = cccprojectpass
+;admin = cccprojectpass
