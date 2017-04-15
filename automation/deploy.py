@@ -7,7 +7,7 @@ import sys
 from ansible_functions import runPlaybook
 from boto.ec2.regioninfo import RegionInfo
 
-num_of_instances = 4
+num_of_instances = 1
 instance_type = 'm1.medium'
 volume_size = 50
 playbook_file_name = 'playbook.yml'
@@ -96,7 +96,7 @@ def create_connection():
 def create_instances(num):
     res = ec2.run_instances(image_id='ami-86f4a44c', key_name='ccc-project', instance_type=instance_type,
                              placement='melbourne-qh2', min_count=num, max_count=num,
-                             security_groups=['CCC', 'SSH', 'default'])
+                             security_groups=['CCC', 'SSH', 'default', 'CouchDB'])
     return res.instances
 
 
