@@ -1,80 +1,129 @@
-import json
+import boto
+import time
+import paramiko
 import os
-from pprint import pprint
-from collections import namedtuple
-from tempfile import NamedTemporaryFile
-from ansible.parsing.dataloader import DataLoader
-from ansible.vars import VariableManager
-from ansible.inventory import Inventory
-from ansible.playbook.play import Play
-from ansible.executor.task_queue_manager import TaskQueueManager
-from ansible.plugins.callback import CallbackBase
+import sys
+from deploy import deploy
+from boto.ec2.regioninfo import RegionInfo
+
+aws_access_key_id = '***REMOVED***'
+aws_secret_access_key = '***REMOVED***'
+
+num_of_instances = 4
+instance_type = 'm1.medium'
+volume_size = 50
 
 
-class ResultCallback(CallbackBase):
-    """A sample callback plugin used for performing an action as results come in
+def main():
+    global ec2
+    start_time = time.time()
+    ec2 = create_connection()
+    print('------ Connection to NeCTAR established ------\n')
+    print('Creating {0} instances of type {1}'.format(num_of_instances, instance_type))
+    instances = create_instances(num_of_instances)
 
-    If you want to collect all results into a single object for processing at
-    the end of the execution, look into utilizing the ``json`` callback plugin
-    or writing your own custom callback plugin
-    """
-    def v2_runner_on_ok(self, result, **kwargs):
-        """Print a json representation of the result
+    for i in instances:
+        print(i.id + ':' + i.state)
 
-        This method could store the result in an instance attribute for retrieval later
-        """
-        host = result._host
-        print(json.dumps({host.name: result._result}, indent=4))
+    print('\n------ Attaching volumes ------')
+    cont = False
+    while not cont:
+        cont = True
+        vols = ec2.get_all_volumes()
+        for i in instances:
+            i.update()
+            if i.state == 'running':
+                volumes = [v for v in vols if v.attach_data.instance_id == i.id]
+                if len(volumes) == 0:
+                    vol_id = create_vol(volume_size)
+                    attach_volume(vol_id, i.id)
+            else:
+                cont = False
+                break
+        if cont is False:
+            print('One or more instances still spawning - waiting 15 seconds')
+            time.sleep(15)
 
-def deploy(hosts):
-    Options = namedtuple('Options', ['connection', 'private_key_file','module_path', 'forks', 'become', 'become_method', 'become_user', 'check'])
-    variable_manager = VariableManager()
-    loader = DataLoader()
+    print('\n------ IP addresses ------')
+    hosts = []
+    for i in instances:
+        print(i.id + ':' + i.private_ip_address)
+        hosts.append(i.private_ip_address)
 
-    options = Options(connection='ssh', private_key_file='/Users/david/.ssh/ccc-project', module_path='', forks=100, become=None, become_method='sudo', become_user='root', check=False)
-    passwords = dict(vault_pass='')
+    print('\n------ Checking SSH ------')
+    while True:
+        if check_ssh(hosts) is True:
+            break
+        print('SSH not yet active on all instances - waiting 15 seconds\n')
+        time.sleep(15)
 
-    results_callback = ResultCallback()
+    print('\nDeploying to ' + str(hosts))
+    status, message = deploy(hosts)
+    print(message)
+    print("--- %s seconds ---" % (time.time() - start_time))
+    sys.exit(status)
 
-    host_file = NamedTemporaryFile(delete=False)
-    host_file.write(b'[servers]\n')
+
+def create_connection():
+    region = RegionInfo(name='melbourne', endpoint='nova.rc.nectar.org.au')
+    ec2 = boto.connect_ec2(aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key,
+                           is_secure=True, region=region, port=8773, path='/services/Cloud', validate_certs=False)
+    return ec2
+
+
+def create_instances(num):
+    res = ec2.run_instances(image_id='ami-86f4a44c', key_name='ccc-project', instance_type=instance_type,
+                             placement='melbourne-qh2', min_count=num, max_count=num,
+                             security_groups=['CCC', 'SSH', 'default'])
+    return res.instances
+
+
+def create_vol(size):
+    vol = ec2.create_volume(size, 'melbourne-qh2')
+    print('Created {0}gb volume: {1}'.format(size, vol.id), end='')
+    return vol.id
+
+
+def attach_volume(vol_id, i_id):
+    vol = ec2.get_all_volumes([vol_id])[0]
+    if vol.status == 'available':
+        ec2.attach_volume(vol.id, i_id, '/dev/vdc')
+        print(' - attached to instance {0}'.format(i_id))
+    else:
+        print('Not available')
+
+
+def get_instances():
+    return ec2.get_only_instances()
+
+
+def print_instances():
+    instances = get_instances()
+    for i in instances:
+        print(i.id + ':' + i.state)
+
+
+class MissingKeyPolicy(paramiko.client.AutoAddPolicy):
+    def missing_host_key(self, client, hostname, key):
+        with open(os.path.expanduser('~/.ssh/known_hosts'), 'a') as f:
+            f.write('%s %s %s\n' % (hostname, 'ssh-rsa', key.get_base64()))
+        super(MissingKeyPolicy, self).missing_host_key(client, hostname, key)
+
+
+def check_ssh(hosts):
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(MissingKeyPolicy())
+    client.load_system_host_keys()
+    res = True
     for h in hosts:
-        host_file.write(bytes('{0}\n'.format(h), encoding='utf-8'))
-    host_file.close()
+        try:
+            client.connect(h, username='ubuntu', key_filename='/Users/david/.ssh/ccc-project')
+            client.close()
+            print('Connection to ' + h + ' successful')
+        except paramiko.ssh_exception.NoValidConnectionsError:
+            print('Unable to connect to ' + h)
+            res = False
+    return res
 
-    inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list=host_file.name)
-    variable_manager.set_inventory(inventory)
 
-    # create play with tasks
-    play_source =  dict(
-            name = 'CCC Deploy',
-            hosts = 'servers',
-            remote_user = 'ubuntu',
-            gather_facts = 'no',
-            tasks = [
-                dict(name="Run a command",
-                             action=dict(module="command", args="touch /home/ubuntu/asdfdasdf"),
-                             register="output"),
-                dict(action=dict(module='shell', args='ls'), register='shell_out'),
-                dict(action=dict(module='debug', args=dict(msg='{{shell_out.stdout}}')))
-             ]
-        )
-    play = Play().load(play_source, variable_manager=variable_manager, loader=loader)
-
-    # actually run it
-    tqm = None
-    try:
-        tqm = TaskQueueManager(
-                  inventory=inventory,
-                  variable_manager=variable_manager,
-                  loader=loader,
-                  options=options,
-                  passwords=passwords,
-                  stdout_callback=results_callback
-              )
-        result = tqm.run(play)
-        pprint(result)
-    finally:
-        if tqm is not None:
-            tqm.cleanup()
-        os.remove(host_file.name)
+if __name__ == '__main__':main()
