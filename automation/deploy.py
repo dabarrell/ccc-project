@@ -1,21 +1,32 @@
+#!/usr/bin/env python
 import boto
 import time
 import paramiko
 import os
 import sys
-from deploy import deploy
+from ansible_functions import runPlaybook
 from boto.ec2.regioninfo import RegionInfo
-
-aws_access_key_id = '3161434dc53f435b81132e9743f8bdad'
-aws_secret_access_key = 'bf6dd7caf81f44719a5a28a7201bf007'
 
 num_of_instances = 4
 instance_type = 'm1.medium'
 volume_size = 50
+playbook_file_name = 'playbook.yml'
+
+aws_access_key_id = '3161434dc53f435b81132e9743f8bdad'
+aws_secret_access_key = 'bf6dd7caf81f44719a5a28a7201bf007'
+
+private_key_file = os.getenv('CCC_PRIVATE_KEY') or os.path.expanduser('~/.ssh/ccc-project')
 
 
 def main():
     global ec2
+    if not os.path.isfile(private_key_file):
+        print('Error: Private key not found. Please set CCC_PRIVATE_KEY environmental variable, or place at ~/.ssh/ccc-project.')
+        sys.exit(1)
+    if not oct(os.stat('/Users/david/.ssh/ccc-project').st_mode & 0o0077) == oct(0):
+        print('Error: Private key permissions too open. Please restrict to 600.')
+        sys.exit(1)
+
     start_time = time.time()
     ec2 = create_connection()
     print('------ Connection to NeCTAR established ------\n')
@@ -35,8 +46,16 @@ def main():
             if i.state == 'running':
                 volumes = [v for v in vols if v.attach_data.instance_id == i.id]
                 if len(volumes) == 0:
-                    vol_id = create_vol(volume_size)
-                    attach_volume(vol_id, i.id)
+                    try:
+                        vol_id = create_vol(volume_size)
+                    except:
+                        print('Failed to create volume')
+                        continue
+                    try:
+                        attach_volume(vol_id, i.id)
+                    except:
+                        print(' - failed to attach volume')
+                        continue
             else:
                 cont = False
                 break
@@ -58,9 +77,12 @@ def main():
         time.sleep(15)
 
     print('\nDeploying to ' + str(hosts))
-    status, message = deploy(hosts)
+    pb_dir = os.path.dirname(os.path.abspath(__file__))
+    playbook = "%s/%s" % (pb_dir, playbook_file_name)
+
+    status, message = runPlaybook(hosts, playbook=playbook, private_key_file=private_key_file)
     print(message)
-    print("--- %s seconds ---" % (time.time() - start_time))
+    print("------ %s seconds ------" % (time.time() - start_time))
     sys.exit(status)
 
 
@@ -117,7 +139,7 @@ def check_ssh(hosts):
     res = True
     for h in hosts:
         try:
-            client.connect(h, username='ubuntu', key_filename='/Users/david/.ssh/ccc-project')
+            client.connect(h, username='ubuntu', key_filename=private_key_file)
             client.close()
             print('Connection to ' + h + ' successful')
         except paramiko.ssh_exception.NoValidConnectionsError:
