@@ -1,0 +1,57 @@
+---
+- name: Check connection to CouchDB instances
+  uri:
+    url: http://{{ inventory_hostname }}:{{ item }}/
+    method: GET
+    status_code: 200
+  with_items:
+    - 5986
+    - 5984
+  tags: cluster
+
+- name: Create admin user
+  command: curl -X PUT http://localhost:5984/_node/couchdb@{{ inventory_hostname }}/_config/admins/{{ admin_user }} -d '"{{ admin_pass }}"'
+  tags: cluster
+#
+- name: Add nodes to cluster
+  uri:
+    url: http://{{ inventory_hostname }}:5986/_nodes/couchdb@{{ item }}
+    method: PUT
+    user: "{{ admin_user | default(omit) }}"
+    password: "{{ admin_pass | default(omit) }}"
+    force_basic_auth: "{{ admin_user | length > 0 }}"
+    status_code: 200,201,412
+    body_format: json
+    body: "{}"
+  with_items: "{{ groups['servers'] }}"
+#    - 115.146.89.101
+  when: inventory_hostname == groups['servers'][0] and inventory_hostname != item
+  tags: cluster
+
+- name: Create databases
+  uri:
+    url: "http://{{ inventory_hostname }}:5984/{{ item.key }}"
+    method: PUT
+    user: "{{ admin_user | default(omit) }}"
+    password: "{{ admin_pass | default(omit) }}"
+    force_basic_auth: "{{ admin_user | length > 0 }}"
+    status_code: 201,412
+  with_dict: "{{ couchdb_databases }}"
+  when: inventory_hostname == groups['servers'][0]
+  tags: cluster
+
+- name: Secure databases
+  uri:
+    url: "http://{{ inventory_hostname }}:5984/{{ item.key }}/_security"
+    method: PUT
+    user: "{{ admin_user | default(omit) }}"
+    password: "{{ admin_pass | default(omit) }}"
+    force_basic_auth: "{{ admin_user | length > 0 }}"
+    body_format: json
+    body:
+      admins: "{{ item.value.admins | default({}) }}"
+      members: "{{ item.value.members | default({}) }}"
+    status_code: 200
+  with_dict: "{{ couchdb_databases }}"
+  when: inventory_hostname == groups['servers'][0] and ('admins' in item.value or 'members' in item.value)
+  tags: cluster

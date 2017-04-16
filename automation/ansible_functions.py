@@ -87,11 +87,11 @@ class ResultCallback(CallbackModule):
         super(ResultCallback, self).v2_runner_on_failed(result, ignore_errors)
 
 
-def runPlaybook(hosts, playbook, private_key_file=private_key_file):
+def runPlaybook(hosts, playbook, tags=[], private_key_file=private_key_file):
     variable_manager = VariableManager()
     loader = DataLoader()
 
-    options = Options(connection='ssh', private_key_file=private_key_file, module_path='', forks=100, become=True, become_method='sudo', become_user='root', check=False)
+    options = Options(connection='ssh', private_key_file=private_key_file, module_path='', forks=100, become=True, become_method='sudo', become_user='root', check=False, tags=tags)
     passwords = dict(vault_pass='')
 
     results_callback = ResultCallback()
