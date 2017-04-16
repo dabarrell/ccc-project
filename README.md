@@ -1,10 +1,18 @@
 # Cluster and Cloud Computing Project
 
 
-## CouchDB Deployment
+## CouchDB on NeCTAR
+### Prerequisites
+Requires Python 3.5+. It is recommended that you make a virtual environment
+and install prerequesites before proceeding. This can be done with the following:
 
-Requires Python 3.5+.
+```
+mkvirtualenv -p python3 ccc-project
+workon ccc-project
+pip install -r automation/requirements.txt
+```
 
+### Deployment
 To deploy, call
 
 ```
@@ -33,3 +41,8 @@ be reattached to a new instance if required.
 The script will output the admin links for each node, and they can be accessed using the
 admin username and username set in `automation/playbook/roles/cluster/vars/main.yml`.
 
+## Authors
+- David Barrell ([Github](https://github.com/dabarrell/))
+- Bobby Koteski ([Github](https://github.com/bkot88))
+- Annie Zhou ([Github](https://github.com/anya-z))
+- Steve Thanh ([Github](https://github.com/thanhdang1109))
