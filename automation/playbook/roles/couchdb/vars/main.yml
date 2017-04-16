@@ -1,0 +1,4 @@
+---
+couchdb_compile_dir: /home/ubuntu/couchdb-src
+couchdb_install_dir: /home/ubuntu/couchdb
+couchdb_version: master
