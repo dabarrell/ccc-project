@@ -1,0 +1,33 @@
+---
+admin_user: admin
+admin_pass: ***REMOVED***
+
+couchdb_databases:
+  _global_changes:
+    admins:
+      names:
+        - admin
+    members:
+      names:
+        - admin
+  _users:
+    admins:
+      names:
+        - admin
+    members:
+      names:
+        - admin
+  _replicator:
+    admins:
+      names:
+        - admin
+    members:
+      names:
+        - admin
+  tweets:
+    admins:
+      names:
+        - admin
+    members:
+      names:
+        - admin

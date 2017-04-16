@@ -1,0 +1,9 @@
+---
+- name: Install CouchDB on all servers
+  hosts: servers
+  remote_user: ubuntu
+  become: yes
+
+  roles:
+    - couchdb
+    - cluster
