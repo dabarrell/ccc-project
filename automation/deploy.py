@@ -5,6 +5,8 @@ import paramiko
 import os
 import sys
 import argparse
+import platform
+import subprocess
 from ansible_functions import runPlaybook
 from boto.ec2.regioninfo import RegionInfo
 
@@ -33,6 +35,10 @@ def main():
         volume_size = args.size
     if args.type is not None:
         instance_type = args.type
+
+    if not check_unimelb_network():
+        print('Error: Not connected to UniMelb network/VPN. Please connect and try again.')
+        sys.exit(1)
 
     if not os.path.isfile(private_key_file):
         print('Error: Private key not found. Please set CCC_PRIVATE_KEY environmental variable, or place at ~/.ssh/ccc-project.')
@@ -95,7 +101,13 @@ def main():
     playbook = "%s/%s" % (pb_dir, playbook_file_name)
 
     status, message = runPlaybook(hosts, playbook=playbook, private_key_file=private_key_file)
-    print(message)
+    print(message + '\n')
+    if status == 0:
+        print('The CouchDB admin utilities can now be accessed at the following URLs:')
+        for h in hosts:
+            print('http://{0}:5984/_utils/index.html'.format(h))
+        print()
+
     print("------ %s seconds ------" % (time.time() - start_time))
     sys.exit(status)
 
@@ -160,6 +172,15 @@ def check_ssh(hosts):
             print('Unable to connect to ' + h)
             res = False
     return res
+
+
+def check_unimelb_network():
+    host = "dimefox.eng.unimelb.edu.au"
+    try:
+        subprocess.check_output("ping " + ("-n 1 " if  platform.system().lower()=="windows" else "-c 1 ") + host, shell=True)
+    except:
+        return False
+    return True
 
 
 if __name__ == '__main__':main()
