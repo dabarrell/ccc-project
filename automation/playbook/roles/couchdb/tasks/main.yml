@@ -1,81 +1,70 @@
 ---
 - name: Update apt cache
   apt: update_cache=yes
+  tags: packages
 
-- name: Install build-essential
-  apt: name=build-essential state=present
-
-- name: Install pkg-config
-  apt: name=pkg-config state=present
-
-- name: Install erlang
-  apt: name=erlang state=present
-
-- name: Install libmozjs185-dev
-  apt: name=libmozjs185-dev state=present
-
-- name: Install libcurl4-openssl-dev
-  apt: name=libcurl4-openssl-dev state=present
-
-- name: Install libicu-dev
-  apt: name=libicu-dev state=present
-
-- name: Install git
-  apt: name=git state=present
-
-- name: Install node
-  apt: name=nodejs state=present
-
-- name: Install npm
-  apt: name=npm state=present
+- name: Install packages
+  apt: name={{ item }} state=present
+  with_items:
+    - build-essential
+    - pkg-config
+    - erlang
+    - libmozjs185-dev
+    - libcurl4-openssl-dev
+    - libicu-dev
+    - git
+    - curl
+    - nodejs
+    - npm
+    - python-sphinx
+    - runit
+  tags: packages
 
 - name: Creating symbolic link node -> nodejs
   file:
     src: /usr/bin/nodejs
     dest: /usr/bin/node
     state: link
-
-- name: Install sphinx-build
-  apt: name=python-sphinx state=present
+  tags: packages
 
 - name: Download CouchDB from Github
   git: repo=https://github.com/apache/couchdb.git dest={{ couchdb_compile_dir }} accept_hostkey=yes version={{ couchdb_version }}
+  tags: couchdb
 
 - name: Remove erlang man folder
   file: path=/usr/lib/erlang/man state=absent
+  tags: packages
 
 - name: Run configure
   shell: ./configure --disable-docs chdir={{ couchdb_compile_dir }}
+  tags: couchdb
 
 - name: Run make release
   shell: make release chdir={{ couchdb_compile_dir }}
+  tags: couchdb
 
 - name: Copy CouchDB to install location
   command: cp -r {{ couchdb_compile_dir }}/rel/couchdb {{ couchdb_install_dir }}
-
-- name: Install runit
-  apt: name=runit state=present
+  tags: couchdb
 
 - name: Make directories
-  file:
-    path: /var/log/couchdb
-    state: directory
-    mode: 0755
-    owner: ubuntu
-    group: ubuntu
+  file: path={{ item }} state=directory mode=0755 owner=ubuntu group=ubuntu
   with_items:
     - /var/log/couchdb
     - /etc/sv/couchdb/log
     - /mnt/couchdb/data
+  tags: configure
 
-- name: Create local.ini
-  template: src=local.ini.j2 dest={{ couchdb_install_dir }}/etc/local.ini
-
-- name: Create vm.args
-  template: src=vm.args.j2 dest={{ couchdb_install_dir }}/etc/vm.args
+- name: Create config files
+  template: src={{ item }}.j2 dest={{ couchdb_install_dir }}/etc/{{ item }}
+  with_items:
+    - local.ini
+    - vm.args
+  tags: configure
 
 - name: Change owner of CouchDB installation
   file: dest={{ couchdb_install_dir }} owner=ubuntu group=ubuntu mode=0755 recurse=yes
+  tags: configure
 
 - name: Create /etc/sv/couchdb/log/run script
   template:
@@ -84,6 +73,7 @@
     mode: 0744
     owner: ubuntu
     group: ubuntu
+  tags: configure
 
 - name: Create /etc/sv/couchdb/run script
   template:
@@ -92,12 +82,20 @@
     mode: 0744
     owner: ubuntu
     group: ubuntu
+  tags: configure
 
 - name: Creating symbolic link for service
   file:
     src: /etc/sv/couchdb/
     dest: /etc/service/couchdb
     state: link
+  tags: configure
+#
+#- name: Restart CouchDB service
+#  command: sv restart couchdb
+#  tags: configure
 
-- name: Restart CouchDB service
-  command: sv restart couchdb
+- name: Wait 10 seconds for services to start
+  pause:
+    seconds: 10
+  tags: configure

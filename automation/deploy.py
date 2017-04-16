@@ -4,10 +4,11 @@ import time
 import paramiko
 import os
 import sys
+import argparse
 from ansible_functions import runPlaybook
 from boto.ec2.regioninfo import RegionInfo
 
-num_of_instances = 1
+num_of_instances = 2
 instance_type = 'm1.medium'
 volume_size = 50
 playbook_file_name = 'playbook/playbook.yml'
@@ -19,7 +20,20 @@ private_key_file = os.getenv('CCC_PRIVATE_KEY') or os.path.expanduser('~/.ssh/cc
 
 
 def main():
-    global ec2
+    global ec2, num_of_instances, instance_type, volume_size
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--nodes", help="Number of nodes to deploy")
+    parser.add_argument("--size", help="Size of volumes to be attached in gb")
+    parser.add_argument("--type", help="Type of instance to be created")
+    args = parser.parse_args()
+    if args.nodes is not None:
+        num_of_instances = args.nodes
+    if args.size is not None:
+        volume_size = args.size
+    if args.type is not None:
+        instance_type = args.type
+
     if not os.path.isfile(private_key_file):
         print('Error: Private key not found. Please set CCC_PRIVATE_KEY environmental variable, or place at ~/.ssh/ccc-project.')
         sys.exit(1)

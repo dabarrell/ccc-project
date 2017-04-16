@@ -12,6 +12,12 @@ uuid = ee0ca2ab22403572ad69e6ad1a688e46
 database_dir = /mnt/couchdb/data
 view_index_dir = /mnt/couchdb/data
 
+[cluster]
+q=8
+r=2
+w=2
+n=3
+
 [couch_peruser]
 ; If enabled, couch_peruser ensures that a private per-user database
 ; exists for each document in _users. These databases are writable only
@@ -24,7 +30,6 @@ view_index_dir = /mnt/couchdb/data
 
 [chttpd]
 port = 5984
-;bind_address = {{ inventory_hostname }}
 bind_address = 0.0.0.0
 ; Options for the MochiWeb HTTP server.
 ;server_options = [{backlog, 128}, {acceptor_pool_size, 16}]
@@ -32,6 +37,8 @@ bind_address = 0.0.0.0
 ;socket_options = [{recbuf, 262144}, {sndbuf, 262144}, {nodelay, true}]
 
 [httpd]
+bind_address = 0.0.0.0
+port = 5986
 ; NOTE that this only configures the "backend" node-local port, not the
 ; "frontend" clustered port. You probably don't want to change anything in
 ; this section.
@@ -115,4 +122,4 @@ bind_address = 0.0.0.0
 ; 'username = password' lines. Don't forget to restart CouchDB after
 ; changing this.
 [admins]
-;admin = cccprojectpass
+;admin = password
