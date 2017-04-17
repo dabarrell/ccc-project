@@ -4,7 +4,7 @@ script reads a large tweet file and pushes the tweets to a
 couchdb database.
 '''
 
-import couchdb, pycouchdb
+import couchdb
 import sys, json
 from argparse import ArgumentParser
 
@@ -41,30 +41,24 @@ total = 0
 docs = []	
 with open(args.file) as f:
 	for line in f:
+		# find the start and end of the json string
 		lo = line.find('{')
 		hi = line.rfind('}')		
 		if lo is not -1 and hi is not -1:
 			tweet = json.loads(line[lo:hi+1])['json']
-			# print json.dumps(tweet,indent=4)
-			# store tweet in database
-			doc = {
-				'_id' : tweet['id_str'],
-				'text' : tweet['text'],
-				'coordinates' : tweet['coordinates'],
-				'user_name' : tweet['user']['screen_name'],
-				'created_at' : tweet['created_at'],
-				'entities' : tweet['entities']
-			}
-			if tweet['place'] is None:
-				doc['place'] = None
-			else:
-				doc['place'] = tweet['place']['name']
+			# get and set the tweet id
+			doc = {'_id' : tweet['id_str']}
+			# update the rest of the doc with the entire tweet json object
+			doc.update(tweet)
+			# add doc to the list of docs
 			docs.append(doc)
+			# make a bulk insert into the db
 			if len(docs) % args.bulk == 0:
 				db.update(docs)
 				total += len(docs)
 				print('updated: ' + str(len(docs)) + ' total: ' + str(total))
 				docs = []
+	# update the remaining tweets in docs
 	if len(docs) > 0:
 		db.update(docs)
 		total += len(docs)
