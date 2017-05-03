@@ -47,9 +47,16 @@ with open(args.file) as f:
 		if lo is not -1 and hi is not -1:
 			tweet = json.loads(line[lo:hi+1])['json']
 			# get and set the tweet id
-			doc = {'_id' : tweet['id_str']}
+			doc = {
+				'_id' : tweet['id_str'],
+				'text': tweet['text'],
+				'lang': tweet['lang']
+			}
 			# update the rest of the doc with the entire tweet json object
-			doc.update(tweet)
+			# strip down tweet
+			# doc.update(tweet)
+			if args.debug is True:
+				print json.dumps(doc,indent=4)
 			# add doc to the list of docs
 			docs.append(doc)
 			# make a bulk insert into the db
