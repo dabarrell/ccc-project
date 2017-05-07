@@ -65,7 +65,7 @@ if __name__ == '__main__':
             # For more details refer to https://dev.twitter.com/docs/streaming-apis
             stream = tweepy.Stream(auth, l)
             # stream.filter(track=[key_word,'melbourne'])
-            stream.filter(locations=[110.95,-54.83,159.29,-11.35],track=['melbourne'])
+            stream.filter(locations=[110.95,-54.83,159.29,-11.35])
         except:
             print 'sleeping for 15 mins'
             print ''
