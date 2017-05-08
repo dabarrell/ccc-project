@@ -41,6 +41,24 @@ be reattached to a new instance if required.
 The script will output the admin links for each node, and they can be accessed using the
 admin username and username set in `automation/playbook/roles/cluster/vars/main.yml`.
 
+### Website
+To build the website, you need npm. Homebrew is recommended for installing it on Mac.
+Use `brew install node`. On Windows, use the installer from [http://nodejs.org/](http://nodejs.org/).
+In both cases, you can test the installation with `npm -v`, which should return the
+version number.
+
+Once you have npm, navigate to `website/`, and run `npm install` to install required
+packages.
+
+You can then build by running `gulp`. This will run the tasks as detailed in `gulpfile.js`,
+with the output in `website/build/`. The contents of this folder than then be deployed
+where required.
+
+For development, run `gulp dev`. This will build the source, as above, but also start
+BrowserSync, which will automatically rebuild and reload your browser when it detects
+changes to any source files. Note that it'll automatically load the root of `build/`,
+so you may have to navigate to the relevant file manually.
+
 ## Authors
 - David Barrell ([Github](https://github.com/dabarrell/))
 - Bobby Koteski ([Github](https://github.com/bkot88))
