@@ -29,14 +29,14 @@ def get_tweets(skip,limit,sleep=8):
 		try:
 			return json.loads(r.content)
 		except Exception as e:
-			print '-- invalid json object --'
-			print 'sleeping for {} seconds. relax!'.format(sleep)
+			print('-- invalid json object --')
+			print('sleeping for {} seconds. relax!'.format(sleep))
 			time.sleep(sleep)
 			sys.stdout.flush()
 			return get_tweets(skip,limit,sleep=sleep*2)
 	else:
-		print '-- server did not respond --'
-		print 'sleeping for {} seconds. relax!'.format(sleep)
+		print('-- server did not respond --')
+		print('sleeping for {} seconds. relax!'.format(sleep))
 		time.sleep(sleep)
 		sys.stdout.flush()
 		return get_tweets(skip,limit,sleep=sleep*2)
@@ -46,9 +46,9 @@ db_url = 'http://***REMOVED***@localhost:5984/'
 db = couchdb.Server(db_url)['foreign2']
 
 n = get_item_count()
-print 'processing!!! ...time to relax!'
+print('processing!!! ...time to relax!')
 
-for k in xrange(0,n/PROCESS+1):
+for k in range(0,n/PROCESS+1):
 	skip = k * PROCESS
 	collection = []
 	docs = get_tweets(skip,PROCESS)
@@ -63,9 +63,9 @@ for k in xrange(0,n/PROCESS+1):
 					# sys.stdout.flush()
 					collection.append(t)
 		# mass update to the db
-		print 'processed:', skip + PROCESS, 'tweets. relax!' 
+		print('processed:', skip + PROCESS, 'tweets. relax!')
 		db.update(collection)
 		sys.stdout.flush()
 		# sys.exit()
 	else:
-		print 'something went wrong from', skip, '-', skip + PROCESS, 'relax!'
+		print('something went wrong from', skip, '-', skip + PROCESS, 'relax!')

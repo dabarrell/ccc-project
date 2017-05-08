@@ -1,5 +1,6 @@
 import tweepy
 import json
+import time
 import couchdb
 
 # Twitter API authentication details.
@@ -50,4 +51,4 @@ while True:
             pass
 
         except Exception as e:
-            print e
+            print(e)
