@@ -1,0 +1,4 @@
+#!/bin/sh
+export HOME=/home/ubuntu
+exec 2>&1
+exec chpst -u ubuntu /usr/bin/python3 {{ scripts_dir }}/harvester.py

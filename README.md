@@ -45,4 +45,4 @@ admin username and username set in `automation/playbook/roles/cluster/vars/main.
 - David Barrell ([Github](https://github.com/dabarrell/))
 - Bobby Koteski ([Github](https://github.com/bkot88))
 - Annie Zhou ([Github](https://github.com/anya-z))
-- Steve Thanh ([Github](https://github.com/thanhdang1109))
+- Steve Dang ([Github](https://github.com/thanhdang1109))
