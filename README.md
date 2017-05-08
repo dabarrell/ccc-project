@@ -9,7 +9,7 @@ and install prerequesites before proceeding. This can be done with the following
 ```
 mkvirtualenv -p python3 ccc-project
 workon ccc-project
-pip install -r automation/requirements.txt
+pip install -r requirements.txt
 ```
 
 ### Deployment
