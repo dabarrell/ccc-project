@@ -30,17 +30,17 @@ class StdOutListener(tweepy.StreamListener):
                 doc['place'] = decoded['place']['name']
             else:
                 doc['place'] = None
-            print doc
-            print tweetdb.save(doc)
-            print ''
+            print(doc)
+            print(tweetdb.save(doc))
+            print('')
         except Exception as e:
-            print e
+            print(e)
             # print json.dumps(decoded,indent=4)
-            print '' 
+            print('' )
         return True
 
     def on_error(self, status):
-        print status
+        print(status)
 
 if __name__ == '__main__':
     '''
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     auth.set_access_token(access_token, access_token_secret)
 
     key_word = 'australia'
-    print "Showing all new tweets for " + key_word
+    print("Showing all new tweets for " + key_word)
 
     while True:
         try:
@@ -67,7 +67,6 @@ if __name__ == '__main__':
             # stream.filter(track=[key_word,'melbourne'])
             stream.filter(locations=[110.95,-54.83,159.29,-11.35])
         except:
-            print 'sleeping for 15 mins'
-            print ''
+            print('sleeping for 15 mins\n')
             time.sleep(60*15)
             continue

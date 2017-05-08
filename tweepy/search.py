@@ -15,7 +15,6 @@ stuff = api.search(q='python')
 
 for status in stuff:
 	# tweet = json.dumps(status._json,indent=4)
-	print status._json['text']
-	print ''
+	print(status._json['text'] + '\n')
 
-print api.rate_limit_status()
+print(api.rate_limit_status())

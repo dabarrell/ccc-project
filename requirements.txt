@@ -20,3 +20,5 @@ python-dateutil==2.6.0
 PyYAML==3.12
 s3transfer==0.1.10
 six==1.10.0
+couchdb
+requests
