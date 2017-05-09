@@ -1,5 +1,9 @@
 '''
 python stream.py 
+	--ckey ***RM5WNj25gXq3m6TJX2K*** 
+	--csecret ***7sC3ij17HGVSK6VaxWbPEx72GX33UJGufSnDRFKUGfUf*** 
+	--atoken ***140447908122624-mA6fRa345bNZXESj6V125HILoJYS*** 
+	--asecret ***bVWOxYgldsGqPFjjUXlslupUHgAkTFoYyibGY91*** 
 	--host localhost
 	--port 5984
 	--member admin 
