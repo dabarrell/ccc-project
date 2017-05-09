@@ -98,8 +98,8 @@ def runPlaybook(hosts, playbook, tags=[], private_key_file=private_key_file):
 
     host_file = NamedTemporaryFile(delete=False)
     host_file.write(b'[servers]\n')
-    for h in hosts:
-        host_file.write(bytes('{0}\n'.format(h), encoding='utf-8'))
+    for i, h in enumerate(hosts):
+        host_file.write(bytes('{0} num={1}\n'.format(h,i), encoding='utf-8'))
     host_file.close()
 
     inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list=host_file.name)
@@ -140,5 +140,6 @@ def runPlaybook(hosts, playbook, tags=[], private_key_file=private_key_file):
     return result, out
 
 if __name__ == '__main__':
-    runPlaybook(['115.146.88.201', '115.146.88.204'],
-                '/Users/david/Workspace/uni/CCC/ccc-project/automation/playbook/playbook.yml')
+    runPlaybook(['115.146.89.125'],
+                '/Users/david/Workspace/uni/CCC/ccc-project/automation/playbook/playbook.yml',
+                tags=['harvester'])
