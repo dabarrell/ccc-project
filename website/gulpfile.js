@@ -16,7 +16,12 @@ var sourcemaps = require('gulp-sourcemaps');
 var handlebars = require('gulp-compile-handlebars');
 var fs = require('fs');
 var yaml = require('yaml-js');
-
+var exec = require('child_process').exec;
+var gutil = require('gulp-util');
+var argv  = require('minimist')(process.argv);
+var rsync = require('gulp-rsync');
+var prompt = require('gulp-prompt');
+var gulpif = require('gulp-if');
 
 // Set the banner content
 var banner = ['/*\n',
@@ -155,6 +160,47 @@ gulp.task('browserSync', function() {
     })
 });
 
+// Deploy
+gulp.task('deploy', function() {
+
+  rsyncPaths = ['build/**/*'];
+
+  rsyncConf = {
+    progress: true,
+    incremental: true,
+    relative: true,
+    emptyDirectories: true,
+    recursive: true,
+    clean: true,
+    exclude: [],
+    root: 'build'
+  };
+
+  if (argv.dev) {
+    rsyncConf.hostname = 'davidbarrell.me';
+    // rsyncConf.username = '';
+    rsyncConf.destination = '/home/ubuntu/davidbarrell.me/html/ccc/';
+  //  } else if (argv.prod) {
+  //   rsyncConf.hostname = '';
+  //   rsyncConf.username = '';
+  //   rsyncConf.destination = '';
+  } else {
+    throwError('deploy', gutil.colors.red('Missing or invalid target'));
+  }
+
+  runSequence('default');
+
+  return gulp.src(rsyncPaths)
+  .pipe(gulpif(
+      argv.prod,
+      prompt.confirm({
+        message: 'Heads Up! Are you SURE you want to push to PRODUCTION?',
+        default: false
+      })
+  ))
+  .pipe(rsync(rsyncConf));
+});
+
 // Run everything
 gulp.task('default', ['minify-css', 'minify-js', 'copy', 'html', 'images']);
 
@@ -176,3 +222,11 @@ gulp.task('watch', function() {
     gulp.watch('src/data/**/*', ['data']);
     gulp.watch('src/**/*.html', ['html']);
 });
+
+
+function throwError(taskName, msg) {
+  throw new gutil.PluginError({
+      plugin: taskName,
+      message: msg
+    });
+}
