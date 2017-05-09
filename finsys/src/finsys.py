@@ -16,20 +16,20 @@ def main():
         'usdchf':{'mentions':0, 'buys':0, 'sells':0},
     }
 
-    for row in db.view('_all_docs', include_docs=True):
-        if row.doc['lang'] == 'en':
-            tweet_time = created_at_to_datetime(row.doc['created_at'])
-            if (dt.datetime.now() - tweet_time).seconds / 60 < 60:
-                print tweet_time
-                t_text = row.doc['text'].encode('ascii','ignore').lower()
-                for key in stats:
-                    if key in t_text:
-                        stats[key]['mentions'] += 1
-                        if 'buy' in t_text or 'long' in t_text:
-                            stats[key]['buys'] += 1
-                        elif 'sell' in t_text or 'short' in t_text:
-                            stats[key]['sells'] += 1
-    print stats
+    for row in db.view('_design/docs/_view/by_time', startkey='2017-05-05 13:00:00', endkey='2017-05-05 13:05:00'):
+        doc = row['value']
+        print row.key #, doc['created_at']
+        t_text = doc['text'].encode('ascii','ignore').lower()
+        for key in stats:
+            if key in t_text:
+                stats[key]['mentions'] += 1
+                if 'buy' in t_text or 'long' in t_text:
+                    stats[key]['buys'] += 1
+                elif 'sell' in t_text or 'short' in t_text:
+                    stats[key]['sells'] += 1
+    
+    for key, val in stats.iteritems():
+        print key, val
 
 
 def created_at_to_datetime(string):
