@@ -22,3 +22,4 @@ s3transfer==0.1.10
 six==1.10.0
 couchdb
 requests
+tweepy==3.5.0
