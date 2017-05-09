@@ -1,0 +1,36 @@
+.state{
+  stroke: #a9a9a9;
+  stroke-width: 1;
+}
+.state:hover{
+  fill-opacity:0.5;
+}
+#tooltip {
+  position: fixed;
+  text-align: center;
+  padding: 20px;
+  margin: 10px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 1px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+#tooltip h4{
+  margin:0;
+  font-size:14px;
+}
+#tooltip{
+  background:rgba(0,0,0,0.9);
+  border:1px solid grey;
+  border-radius:5px;
+  font-size:12px;
+  width:auto;
+  padding:4px;
+  color:white;
+  opacity:0;
+}
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
