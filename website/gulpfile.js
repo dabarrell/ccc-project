@@ -67,14 +67,14 @@ gulp.task('minify-css', function(cb) {
 // Minify JS
 gulp.task('minify-js:inner', function() {
     return gulp.src('src/js/**/*.js')
-        .pipe(concat('main.js'))
+        // .pipe(concat('main.js'))
         .pipe(gulp.dest('build/js'))
-        .pipe(sourcemaps.init())
-            .pipe(uglify())
-        .pipe(sourcemaps.write())
-        .pipe(header(banner, { pkg: pkg }))
-        .pipe(rename({ suffix: '.min' }))
-        .pipe(gulp.dest('build/js'))
+        // .pipe(sourcemaps.init())
+            // .pipe(uglify())
+        // .pipe(sourcemaps.write())
+        // .pipe(header(banner, { pkg: pkg }))
+        // .pipe(rename({ suffix: '.min' }))
+        // .pipe(gulp.dest('build/js'))
         .pipe(browserSync.reload({
             stream: true
         }))
@@ -151,6 +151,19 @@ gulp.task('data', function(cb) {
     runSequence('data:clean', 'data:inner', cb);
 });
 
+// Copy fonts
+gulp.task('fonts:inner', function(){
+    return gulp.src('src/fonts/**/*')
+        .pipe(gulp.dest('build/fonts/'));
+});
+gulp.task('fonts:clean', function() {
+    return gulp.src('build/fonts/**/*', { read: false })
+        .pipe(clean());
+});
+gulp.task('fonts', function(cb) {
+    runSequence('fonts:clean', 'fonts:inner', cb);
+});
+
 // Configure the browserSync task
 gulp.task('browserSync', function() {
     browserSync.init({
@@ -202,12 +215,12 @@ gulp.task('deploy', function() {
 });
 
 // Run everything
-gulp.task('default', ['minify-css', 'minify-js', 'copy', 'html', 'images']);
+gulp.task('default', ['minify-css', 'minify-js', 'copy', 'html', 'images', 'data', 'fonts']);
 
 // Dev task with browserSync
 gulp.task('dev', function(cb) {
     runSequence(
-        ['minify-css', 'minify-js', 'copy', 'html', 'images', 'data'],
+        ['minify-css', 'minify-js', 'copy', 'html', 'images', 'data', 'fonts'],
         'browserSync',
         'watch',
         cb
@@ -220,6 +233,7 @@ gulp.task('watch', function() {
     gulp.watch('src/js/**/*.js', ['minify-js']);
     gulp.watch('src/img/**/*', ['images']);
     gulp.watch('src/data/**/*', ['data']);
+    gulp.watch('src/fonts/**/*', ['fonts']);
     gulp.watch('src/**/*.html', ['html']);
 });
 
