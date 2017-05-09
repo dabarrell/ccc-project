@@ -43,7 +43,7 @@ def main():
     if not os.path.isfile(private_key_file):
         print('Error: Private key not found. Please set CCC_PRIVATE_KEY environmental variable, or place at ~/.ssh/ccc-project.')
         sys.exit(1)
-    if not oct(os.stat('/Users/david/.ssh/ccc-project').st_mode & 0o0077) == oct(0):
+    if os.getenv('CCC_PRIVATE_KEY') == None and not oct(os.stat(os.path.expanduser('~/.ssh/ccc-project')).st_mode & 0o0077) == oct(0):
         print('Error: Private key permissions too open. Please restrict to 600.')
         sys.exit(1)
 
