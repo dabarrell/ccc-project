@@ -1,5 +1,6 @@
 import tweepy
 import json
+import time
 import couchdb
 
 # Twitter API authentication details.
@@ -36,7 +37,7 @@ while True:
 
             if not user_searched:
                 # grab all tweets from the user's history
-                for status in rate_limit_handled(tweepy.Cursor(api.user_timeline, id = username).items()):
+                for status in rate_limit_handled(tweepy.Cursor(api.user_timeline, id = username).items(100)):
                     doc = {'_id': status._json['id_str']}
                     doc.update(status._json)
                     tweetdb.save(doc)
@@ -50,4 +51,4 @@ while True:
             pass
 
         except Exception as e:
-            print e
+            print(e)

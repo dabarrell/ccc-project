@@ -1,0 +1,44 @@
+{
+  "name": "team-33-comp90024",
+  "title": "Team 33 Project - COMP90024",
+  "homepage": "",
+  "version": "0.0.1",
+  "description": "COMP90024 - Team 33 Project 2017",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "David Barrell, Annie Zhou, Bobby Koteski, Steve Dang",
+  "license": "ISC",
+  "devDependencies": {
+    "bootstrap": "^3.3.7",
+    "browser-sync": "^2.13.0",
+    "font-awesome": "^4.6.3",
+    "fs": "0.0.1-security",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-cache": "^0.4.5",
+    "gulp-clean-css": "^2.0.10",
+    "gulp-compile-handlebars": "^0.6.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-header": "^1.8.7",
+    "gulp-if": "^2.0.2",
+    "gulp-imagemin": "^3.1.1",
+    "gulp-prompt": "^0.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-rimraf": "^0.2.1",
+    "gulp-rsync": "0.0.7",
+    "gulp-sass": "^3.0.0",
+    "gulp-sourcemaps": "^1.9.1",
+    "gulp-uglify": "^1.5.4",
+    "gulp-util": "^3.0.8",
+    "jquery": "^1.11.3",
+    "minimist": "^1.2.0",
+    "run-sequence": "^1.2.2",
+    "yaml-js": "^0.1.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dabarrell/ccc-project.git"
+  }
+}

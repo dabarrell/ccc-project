@@ -1,0 +1,44 @@
+---
+- name: Make directories
+  file: path={{ item }} state=directory mode=0755 owner=ubuntu group=ubuntu
+  with_items:
+    - "{{ scripts_dir }}"
+    - /var/log/harvester
+    - /etc/sv/harvester/log
+  tags: harvester
+
+- name: Create harvester script
+  template: src={{ item }}.j2 dest={{ scripts_dir }}/{{ item }} owner=ubuntu group=ubuntu
+  with_items:
+    - harvester.py
+  tags: harvester
+
+- name: Create /etc/sv/harvester/log/run script
+  template:
+    src: log.run.j2
+    dest: /etc/sv/harvester/log/run
+    mode: 0744
+    owner: ubuntu
+    group: ubuntu
+  tags: harvester
+
+- name: Create /etc/sv/harvester/run script
+  template:
+    src: run.j2
+    dest: /etc/sv/harvester/run
+    mode: 0744
+    owner: ubuntu
+    group: ubuntu
+  tags: harvester
+
+- name: Creating symbolic link for service
+  file:
+    src: /etc/sv/harvester/
+    dest: /etc/service/harvester
+    state: link
+  tags: harvester
+
+- name: Wait 10 seconds for services to start
+  pause:
+    seconds: 10
+  tags: harvester

@@ -90,10 +90,6 @@
     dest: /etc/service/couchdb
     state: link
   tags: configure
-#
-#- name: Restart CouchDB service
-#  command: sv restart couchdb
-#  tags: configure
 
 - name: Wait 10 seconds for services to start
   pause:

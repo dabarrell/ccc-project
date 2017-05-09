@@ -56,7 +56,7 @@ with open(args.file) as f:
 			# strip down tweet
 			# doc.update(tweet)
 			if args.debug is True:
-				print json.dumps(doc,indent=4)
+				print(json.dumps(doc,indent=4))
 			# add doc to the list of docs
 			docs.append(doc)
 			# make a bulk insert into the db
