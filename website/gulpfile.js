@@ -201,7 +201,7 @@ gulp.task('deploy', function() {
     throwError('deploy', gutil.colors.red('Missing or invalid target'));
   }
 
-  runSequence('default');
+  // runSequence('default');
 
   return gulp.src(rsyncPaths)
   .pipe(gulpif(
