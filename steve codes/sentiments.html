@@ -1,0 +1,151 @@
+<!-- Visualize sentiments of tweets  -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Visualizing Twitter users' sentiments in Melbourne</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.js'></script>
+    <script src="./js/jquery-3.2.1.min.js"></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+<body>
+
+<!-- ========================================================================================================= -->
+
+<div id='map'></div>
+
+<script>
+
+let url = "http://***REMOVED***@115.146.87.112:5984/processed_tweet_db/_design/for_visualization/_view/new-view?&reduce=false"
+// Views:
+// for_visualization: any tweet has point coordinates and polarity
+// community-langs: any tweet has an assigned community_lang 
+
+$.get(url, function(couchData){
+    
+    console.log(couchData);
+    
+    // access token to mapbox 
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYmRhbmcxIiwiYSI6ImNqMmVzOTl1bzA3c2oycWx2bXQ5d3BkYW0ifQ.eMCcDItwOxuOwjazCFCyZQ';
+    
+    // Define a map 
+    var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: 'mapbox://styles/mapbox/light-v9', //stylesheet location
+        center: [144.98, -37.79], // starting position
+        // pitch: 85,
+        bearing: 5, 
+        zoom: 11.5 // starting zoom
+    });
+
+    // Add zoom and rotation controls to the map.
+    map.addControl(new mapboxgl.NavigationControl());
+
+    // Add FullScreen view 
+    map.addControl(new mapboxgl.FullscreenControl());
+
+    let featureList = []
+
+    couchData.rows.forEach(function(row){
+        var feature = {
+            "type": "Feature",
+            "geometry":{
+                "type": "Point",
+                "coordinates": row.key.coordinates
+            },
+            "properties":{
+                "text": row.key.text,
+                "polarity": row.key.polarity,
+                "community": row.key.community,
+                "translation": row.key.translation
+            }
+        }
+        featureList.push(feature)
+    });
+
+    let geoJson = {
+        "type": "FeatureCollection",
+        "features": featureList
+    }
+
+    // color the dots based on polarity score from -1 to 1 (neg to pos)
+    // source: http://htmlcolorcodes.com/color-chart/
+    var colorList = [
+        // [-0.01, '#b71c1c'],
+        [-0.75, '#d32f2f'],
+        [-0.5, '#f44336'],
+        [-0.25, '#e57373'],
+        [0, '#b3e5fc'],
+        [0.25, '#4fc3f7'],
+        [0.5,'#03a9f4'],
+        [0.75,'#0288d1'],
+        // [0.01,'#01579b' ]
+    ];
+    
+    // plotting GeoJSON points on maps 
+    map.on('load', function () {
+
+        map.addLayer({
+            "id": "sentiments",
+            "type": "circle",
+            "source": {
+                "type": "geojson",
+                "data": geoJson,
+            },
+            "paint":{
+                'circle-radius': {
+                    'base': 1.75,
+                    'stops': [[12, 2], [22, 20]]
+                },
+                'circle-color': {
+                    property: "polarity",
+                    type: "interval",
+                    stops: colorList,
+                },
+                'circle-opacity': 0.7
+            }
+        });
+
+    });
+    // When a click event occurs near a place, open a popup at the location of
+    // the feature, with HTML description from its properties
+    map.on('click', function(e) {
+        var features = map.queryRenderedFeatures(e.point, { layers: ['sentiments'] });
+
+        // if the features have no info, return nothing
+        if (!features.length) {
+            return;
+        }
+
+        var feature = features[0];
+
+        // Populate the popup and set its coordinates
+        // based on the feature found
+        var popup = new mapboxgl.Popup()
+            .setLngLat(feature.geometry.coordinates)
+            .setHTML(
+                '<div id="popup" class="popup" style="z-index: 10;"> <h5> Detail: </h5>' +
+                '<ul class="list-group">' +
+                '<li class="list-group-item"> Tweet          : ' + feature.properties['text'] + " </li>" +
+                '<li class="list-group-item"> Translation    : ' + feature.properties['translation'] + " </li>" +
+                '<li class="list-group-item"> Sentiment score: ' + feature.properties['polarity'] + " </li>" +
+                '<li class="list-group-item"> Community      : ' + feature.properties['community'] + " </li>" + '</ul> </div>')
+            .addTo(map);
+    });
+
+    // // Use the same approach as above to indicate that the symbols are clickable
+    // // by changing the cursor style to 'pointer'
+    map.on('mousemove', function(e) {
+        var features = map.queryRenderedFeatures(e.point, { layers: ['sentiments'] });
+        map.getCanvas().style.cursor = 'pointer';
+    });
+});
+</script>
+
+</body>
+</html>
