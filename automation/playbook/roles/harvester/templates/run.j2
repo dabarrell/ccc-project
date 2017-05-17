@@ -1,4 +1,4 @@
 #!/bin/sh
 export HOME=/home/ubuntu
 exec 2>&1
-exec chpst -u ubuntu /usr/bin/python3 {{ scripts_dir }}/harvester.py
+exec chpst -u ubuntu /usr/bin/python3 {{ scripts_dir }}/harvester.py --ckey {{ keys[num].ckey }} --csecret {{ keys[num].csecret }} --atoken {{ keys[num].atoken }} --asecret {{ keys[num].asecret }} --host localhost --port 5984 --member {{ admin_user }} --pw {{ admin_pass }} --dbname tweets --debug

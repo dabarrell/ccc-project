@@ -18,6 +18,7 @@
     - npm
     - python-sphinx
     - runit
+    - python3-pip
   tags: packages
 
 - name: Creating symbolic link node -> nodejs

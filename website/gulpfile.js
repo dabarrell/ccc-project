@@ -191,12 +191,10 @@ gulp.task('deploy', function() {
 
   if (argv.dev) {
     rsyncConf.hostname = 'davidbarrell.me';
-    // rsyncConf.username = '';
     rsyncConf.destination = '/home/ubuntu/davidbarrell.me/html/ccc/';
-  //  } else if (argv.prod) {
-  //   rsyncConf.hostname = '';
-  //   rsyncConf.username = '';
-  //   rsyncConf.destination = '';
+   } else if (argv.prod) {
+    rsyncConf.hostname = 'cccweb';
+    rsyncConf.destination = '/home/ubuntu/web';
   } else {
     throwError('deploy', gutil.colors.red('Missing or invalid target'));
   }

@@ -31,3 +31,10 @@ couchdb_databases:
     members:
       names:
         - admin
+  users:
+    admins:
+      names:
+        - admin
+    members:
+      names:
+        - admin
