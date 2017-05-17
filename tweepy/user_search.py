@@ -10,8 +10,9 @@ access_token = ''
 access_token_secret = ''
 
 # CouchDB authentication details.
-tweetdb = couchdb.Server('')['']
-userdb = couchdb.Server('')['']
+tweetdb = couchdb.Server(server)['tweets']
+testdb = couchdb.Server(server)['test']
+userdb = couchdb.Server(server)['users']
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
@@ -22,6 +23,7 @@ def rate_limit_handled(cursor):
         try:
             yield cursor.next()
         except tweepy.RateLimitError:
+            print('Rate limit hit - sleeping 15 minutes')
             time.sleep(15*60)
 
 while True:
@@ -33,14 +35,20 @@ while True:
             for user in userdb:
                 if user == username:
                     user_searched = True
+                    print('@{0} already searched'.format(username))
                     break
 
             if not user_searched:
                 # grab all tweets from the user's history
-                for status in rate_limit_handled(tweepy.Cursor(api.user_timeline, id = username).items(100)):
+                count = 0
+                for status in rate_limit_handled(tweepy.Cursor(api.user_timeline, id = username).items(1000)):
                     doc = {'_id': status._json['id_str']}
                     doc.update(status._json)
-                    tweetdb.save(doc)
+                    testdb.save(doc)
+                    count += 1
+                    if debug is True:
+                        print(doc)
+                print('{0} tweets added for user @{1}'.format(count, username))
 
                 # keep track of searched users
                 user = {'_id':username}
