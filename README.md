@@ -4,7 +4,7 @@
 ## CouchDB on NeCTAR
 ### Prerequisites
 Requires Python 3.5+. It is recommended that you make a virtual environment
-and install prerequesites before proceeding. This can be done with the following:
+and install prerequisites before proceeding. This can be done with the following:
 
 ```
 mkvirtualenv -p python3 ccc-project
@@ -13,10 +13,17 @@ pip install -r requirements.txt
 ```
 
 ### Deployment
+Before deployment, set the following two environmental variables:
+
+```
+export NECTAR_ACCESS_KEY = <nectar access key id>
+export NECTAR_SECRET_KEY = <nectar secret access key>
+```
+
 To deploy, call
 
 ```
-./automation/deploy.py --nodes <num of nodes> --size <vol size> --type <instance type>
+./deployment/deploy.py --nodes <num of nodes> --size <vol size> --type <instance type>
 ```
 
 Note: the SSH private key can either be placed at `~/.ssh/ccc-project`
@@ -26,7 +33,7 @@ by prefixing the below call with `CCC_PRIVATE_KEY=<path-to-key>`.
 For example, to generate 4 instances of type `m1.medium`, each with a 50gb volume attached:
 
 ```
-./automation/deploy.py --nodes 4 --size 50 --type m1.medium
+./deployment/deploy.py --nodes 4 --size 50 --type m1.medium
 ```
 
 The deployment script will take some time to run, as it is spinning up
@@ -39,7 +46,7 @@ databases. This volume will persist if the instance is terminated, and can
 be reattached to a new instance if required.
 
 The script will output the admin links for each node, and they can be accessed using the
-admin username and username set in `automation/playbook/roles/cluster/vars/main.yml`.
+admin username and username set in `deployment/playbook/roles/cluster/vars/main.yml`.
 
 ### Website
 To build the website, you need npm. Homebrew is recommended for installing it on Mac.

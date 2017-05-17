@@ -7,49 +7,96 @@
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.js'></script>
     <script src="./js/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <style>
         body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
+        #filter { position:relative; top:0; height: 10%; width:100%; }
+        #map { position:relative; height: 500px;bottom:0; width:100%; }
     </style>
 </head>
 <body>
 
-
+<div id='filters'>
+    <p>
+      <!-- <form> -->
+        <input id="community_filter" type="text" name="community">
+        <input id="btn" type="button" value="Filter" />
+      <!-- </form> -->
+    </p>
+</div>
 <div id='map'></div>
 
 <script>
 
 let url = "http://***REMOVED***@115.146.87.112:5984/processed_tweet_db/_design/unique-users/_view/new-view?group_level=4&reduce=true"
+var languages = {
+  "English": "en",
+  "Arabic":	"ar",
+  "Bengali":	"bn",
+  "Czech":	"cs",
+  "Danish":	"da",
+  "German":	"de",
+  "Greek":	"el",
+  "Spanish":	"es",
+  "Persian":	"fa",
+  "Finnish":	"fi",
+  "Filipino":	"fil",
+  "French":	"fr",
+  "Hebrew":	"he",
+  "Hindi":	"hi",
+  "Hungarian":	"hu",
+  "Indonesian":	"id",
+  "Italian":	"it",
+  "Japanese":	"ja",
+  "Korean":	"ko",
+  "Malay": "msa",
+  "Dutch":	"nl",
+  "Norwegian":	"no",
+  "Polish":	"pl",
+  "Portuguese":	"pt",
+  "Romanian":	"ro",
+  "Russian":	"ru",
+  "Swedish":	"sv",
+  "Thai":	"th",
+  "Turkish":	"tr",
+  "Ukrainian":	"uk",
+  "Urdu":	"ur",
+  "Vietnamese":	"vi",
+  "Chinese": "",
+  "Chinese (Simplified)":	"zh-cn",
+  "Chinese (Traditional)": "zh-tw"
+};
 
 // Views:
 // for_visualization: any tweet has point coordinates and polarity
-// community-langs: any tweet has an assigned community_lang 
+// community-langs: any tweet has an assigned community_lang
 
 $.get(url, function(couchData){
-    
-    console.log(couchData);
-    
-    // access token to mapbox 
+
+    // console.log(couchData);
+
+    // access token to mapbox
     mapboxgl.accessToken = 'pk.eyJ1IjoiYmRhbmcxIiwiYSI6ImNqMmVzOTl1bzA3c2oycWx2bXQ5d3BkYW0ifQ.eMCcDItwOxuOwjazCFCyZQ';
-    
-    // Define a map 
+
+    // Define a map
     var map = new mapboxgl.Map({
         container: 'map', // container id
         style: 'mapbox://styles/mapbox/light-v9', //stylesheet location
         center: [144.98, -37.79], // starting position
         // pitch: 85,
-        bearing: 5, 
+        bearing: 5,
         zoom: 11.5 // starting zoom
     });
 
     // Add zoom and rotation controls to the map.
     map.addControl(new mapboxgl.NavigationControl());
 
-    // Add FullScreen view 
+    // Add FullScreen view
     map.addControl(new mapboxgl.FullscreenControl());
 
-    let featureList = []
+    let featureList = [];
 
     couchData.rows.forEach(function(row){
         var feature = {
@@ -64,11 +111,11 @@ $.get(url, function(couchData){
                 "community_lang": row.key[3],
                 "tweets": row.value
             }
-        }
-        featureList.push(feature)
+        };
+        featureList.push(feature);
     });
 
-    let geoJson = {
+    var geoJson = {
         "type": "FeatureCollection",
         "features": featureList
     }
@@ -154,17 +201,15 @@ $.get(url, function(couchData){
         ['zh-tw','#FFFF00'], //514
         ['zh-TW','#FFFF00'] //28
     ];
-    
-    // plotting GeoJSON points on maps 
+
+    // plotting GeoJSON points on maps
     map.on('load', function () {
 
+        map.addSource('geoJson', { type: 'geojson', data: geoJson });
         map.addLayer({
             "id": "communities",
             "type": "circle",
-            "source": {
-                "type": "geojson",
-                "data": geoJson,
-            },
+            "source": "geoJson",
             "paint":{
                 'circle-radius': {
                     'base': 1.75,
@@ -179,7 +224,7 @@ $.get(url, function(couchData){
             }
         });
 
-     
+
     });
     // When a click event occurs near a place, open a popup at the location of
     // the feature, with HTML description from its properties
@@ -213,7 +258,40 @@ $.get(url, function(couchData){
         var features = map.queryRenderedFeatures(e.point, { layers: ['communities'] });
         map.getCanvas().style.cursor = 'pointer';
     });
+
+    $('#community_filter').keydown(function(e){
+        if(e.keyCode == 13)
+        {
+            updateFilter();
+        }
+    });
+
+    $('#btn').click(function() {
+        updateFilter();
+    });
+
+    function updateFilter() {
+          var comm = $('#community_filter').val().trim();
+          sourceData = Object.assign({}, geoJson);
+          if (comm == 'Chinese') {
+            sourceData.features = sourceData.features.filter(function (el) {
+              return el.properties.community_lang.indexOf('zh') == 0;
+            });
+          } else if (comm != '') {
+            sourceData.features = sourceData.features.filter(function (el) {
+              return el.properties.community_lang == languages[comm];
+            });
+          };
+
+          map.getSource('geoJson').setData(sourceData);
+    };
 });
+
+$( function() {
+  $( "#community_filter" ).autocomplete({
+    source: Object.keys(languages)
+  });
+} );
 </script>
 
 </body>

@@ -15,8 +15,8 @@ instance_type = 'm1.medium'
 volume_size = 50
 playbook_file_name = 'playbook/playbook.yml'
 
-aws_access_key_id = '***REMOVED***'
-aws_secret_access_key = '***REMOVED***'
+nectar_access_key_id = os.getenv('NECTAR_ACCESS_KEY')
+nectar_secret_access_key = os.getenv('NECTAR_SECRET_KEY')
 
 private_key_file = os.getenv('CCC_PRIVATE_KEY') or os.path.expanduser('~/.ssh/ccc-project')
 
@@ -114,7 +114,7 @@ def main():
 
 def create_connection():
     region = RegionInfo(name='melbourne', endpoint='nova.rc.nectar.org.au')
-    ec2 = boto.connect_ec2(aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key,
+    ec2 = boto.connect_ec2(aws_access_key_id=nectar_access_key_id, aws_secret_access_key=nectar_secret_access_key,
                            is_secure=True, region=region, port=8773, path='/services/Cloud', validate_certs=False)
     return ec2
 

@@ -8,6 +8,13 @@ consumer_key = ''
 consumer_secret = ''
 access_token = ''
 access_token_secret = ''
+member = 'admin'
+pw = '***REMOVED***'
+host = 'localhost'
+port = 5984
+debug = True
+
+server = 'http://'+ member +':'+ pw+'@'+host+':'+str(port)+'/'
 
 # CouchDB authentication details.
 tweetdb = couchdb.Server(server)['tweets']

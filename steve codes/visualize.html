@@ -20,27 +20,27 @@
 let url = "http://***REMOVED***@115.146.87.112:5984/processed_tweet_db/_design/for_visualization/_view/new-view?&reduce=false"
 // Views:
 // for_visualization: any tweet has point coordinates and polarity
-// community-langs: any tweet has an assigned community_lang 
+// community-langs: any tweet has an assigned community_lang
 
 
 $.get(url, function(couchData){
     console.log(couchData);
-    // access token to mapbox 
+    // access token to mapbox
     mapboxgl.accessToken = 'pk.eyJ1IjoiYmRhbmcxIiwiYSI6ImNqMmVzOTl1bzA3c2oycWx2bXQ5d3BkYW0ifQ.eMCcDItwOxuOwjazCFCyZQ';
-    // Define a map 
+    // Define a map
     var map = new mapboxgl.Map({
-        container: 'map', // container id
+        container: 'sentimentmap', // container id
         style: 'mapbox://styles/mapbox/dark-v9', //stylesheet location
         center: [144.98, -37.79], // starting position
         // pitch: 85,
-        bearing: 5, 
+        bearing: 5,
         zoom: 11.5 // starting zoom
     });
 
     // Add zoom and rotation controls to the map.
     map.addControl(new mapboxgl.NavigationControl());
 
-    // Add FullScreen view 
+    // Add FullScreen view
     map.addControl(new mapboxgl.FullscreenControl());
 
     let featureList = []
@@ -79,8 +79,8 @@ $.get(url, function(couchData){
         [0.75,'#0288d1'],
         // [1,'#01579b' ]
     ];
-    
-    // plotting GeoJSON points on maps 
+
+    // plotting GeoJSON points on maps
     map.on('load', function () {
         map.addLayer({
             "id": "points",
