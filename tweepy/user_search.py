@@ -4,10 +4,11 @@ import time
 import couchdb
 
 # Twitter API authentication details.
-consumer_key = ''
-consumer_secret = ''
-access_token = ''
-access_token_secret = ''
+consumer_key = '***REMOVED***'
+consumer_secret = '***REMOVED***'
+access_token = '***REMOVED***'
+access_token_secret = '***REMOVED***'
+
 member = 'admin'
 pw = '***REMOVED***'
 host = 'localhost'
