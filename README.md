@@ -1,5 +1,6 @@
 # Cluster and Cloud Computing Project
 
+The result of this project can be found at [http://ccc.barrell.me/](http://ccc.barrell.me/).
 
 ## CouchDB on NeCTAR
 ### Prerequisites
