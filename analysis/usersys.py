@@ -5,7 +5,7 @@ import couchdb, sys, json
 # import numpy as np
 # from matplotlib import pyplot as plt
 
-db = couchdb.Server('http://***REMOVED***@115.146.87.112:5984/')['processed_tweet_db']
+db = couchdb.Server('http://115.146.87.112:5984/')['processed_tweet_db']
 
 def get_no_docs_in_view(db,view_name):
 	res = db.view(view_name,reduce=True)

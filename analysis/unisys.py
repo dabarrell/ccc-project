@@ -4,7 +4,7 @@
 import couchdb, sys, json
 import collections
 
-db = couchdb.Server('http://***REMOVED***@115.146.93.170:5984/')['tweet_all10gb']
+db = couchdb.Server('http://115.146.93.170:5984/')['tweet_all10gb']
 
 def get_no_docs_in_view(db,view_name):
 	res = db.view(view_name,reduce=True)

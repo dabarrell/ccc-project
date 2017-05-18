@@ -260,11 +260,6 @@ def translate_tweets_from_view(db, view, quota, db_recv):
 			print "Already queried all tweets from the view. FINISHED!"
 			print '======================'
 			return 
-					
-
-		
-
-
 
 
 # +----------------------------------------------------------------------+
@@ -276,26 +271,3 @@ if __name__ == '__main__':
 
 	# translate 
 	translate_tweets_from_view(server_send, view_tweets, quotas, db_recv)
-
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -27,7 +27,6 @@
     body_format: json
     body: "{}"
   with_items: "{{ groups['servers'] }}"
-#    - 115.146.89.101
   when: inventory_hostname == groups['servers'][0] and inventory_hostname != item
   tags: cluster
 

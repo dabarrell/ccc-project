@@ -132,15 +132,3 @@ def process_data_from_sender(db, view_name):
 
 if __name__ == '__main__':
 	process_data_from_sender(server_send, view_send)
-	
-	
-	
-
-
-
-
-
-
-
-
-
