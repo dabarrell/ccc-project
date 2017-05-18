@@ -18,15 +18,14 @@
 <div id='map'></div>
 
 <script>
-
-let melb_uni_url = "http://***REMOVED***@115.146.93.170:5984/tweet_all10gb/_design/melb_uni/_view/new-view?&reduce=false"
-let rmit_url = "http://***REMOVED***@115.146.93.170:5984/tweet_all10gb/_design/rmit/_view/new-view?&reduce=false"
-let monash_uni_url = "http://***REMOVED***@115.146.93.170:5984/tweet_all10gb/_design/monash_uni/_view/new-view?&reduce=false"
-let monash_caulfield_url = "http://***REMOVED***@115.146.93.170:5984/tweet_all10gb/_design/monash_caulfield/_view/new-view?&reduce=false"
-let swinburne_url = "http://***REMOVED***@115.146.93.170:5984/tweet_all10gb/_design/swinburne_uni/_view/new-view?&reduce=false"
-let vic_uni_url = "http://***REMOVED***@115.146.93.170:5984/tweet_all10gb/_design/vic_uni/_view/new-view?&reduce=false"
-let latrobe_uni_url = "http://***REMOVED***@115.146.93.170:5984/tweet_all10gb/_design/latrobe_uni/_view/new-view?&reduce=false"
-let deakin_uni_url = "http://***REMOVED***@115.146.93.170:5984/tweet_all10gb/_design/deakin_uni/_view/new-view?&reduce=false"
+let melb_uni_url = "http://115.146.93.170:5984/tweet_all10gb/_design/melb_uni/_view/new-view?&reduce=false"
+let rmit_url = "http://115.146.93.170:5984/tweet_all10gb/_design/rmit/_view/new-view?&reduce=false"
+let monash_uni_url = "http://115.146.93.170:5984/tweet_all10gb/_design/monash_uni/_view/new-view?&reduce=false"
+let monash_caulfield_url = "http://115.146.93.170:5984/tweet_all10gb/_design/monash_caulfield/_view/new-view?&reduce=false"
+let swinburne_url = "http://115.146.93.170:5984/tweet_all10gb/_design/swinburne_uni/_view/new-view?&reduce=false"
+let vic_uni_url = "http://115.146.93.170:5984/tweet_all10gb/_design/vic_uni/_view/new-view?&reduce=false"
+let latrobe_uni_url = "http://115.146.93.170:5984/tweet_all10gb/_design/latrobe_uni/_view/new-view?&reduce=false"
+let deakin_uni_url = "http://115.146.93.170:5984/tweet_all10gb/_design/deakin_uni/_view/new-view?&reduce=false"
 
 // source: http://htmlcolorcodes.com/color-chart/
 var sentimentList = [
@@ -43,7 +42,7 @@ var sentimentList = [
 
 // Views:
 // for_visualization: any tweet has point coordinates and polarity
-// community-langs: any tweet has an assigned community_lang 
+// community-langs: any tweet has an assigned community_lang
 
  $.get(rmit_url, function(rmit_data){
 	$.get(monash_uni_url, function(monash_data){
@@ -61,27 +60,27 @@ var sentimentList = [
 								console.log(latrobe_uni_data);
 							    console.log(deakin_uni_data);
 							    console.log(melb_uni_data);
-							    
-							    // access token to mapbox 
+
+							    // access token to mapbox
 							    mapboxgl.accessToken = 'pk.eyJ1IjoiYmRhbmcxIiwiYSI6ImNqMmVzOTl1bzA3c2oycWx2bXQ5d3BkYW0ifQ.eMCcDItwOxuOwjazCFCyZQ';
-							    
-							    // Define a map 
+
+							    // Define a map
 							    var map = new mapboxgl.Map({
 							        container: 'map', // container id
 							        style: 'mapbox://styles/mapbox/light-v9', //stylesheet location
 							        center: [144.98, -37.79], // starting position
 							        // pitch: 85,
-							        bearing: 5, 
+							        bearing: 5,
 							        zoom: 11.5 // starting zoom
 							    });
 
 							    // Add zoom and rotation controls to the map.
 							    map.addControl(new mapboxgl.NavigationControl());
 
-							    // Add FullScreen view 
+							    // Add FullScreen view
 							    map.addControl(new mapboxgl.FullscreenControl());
 
-							    
+
 
 //////////////////////////////////////////////////////////////////////////////////
 							    // layer 1: Unimelb
@@ -97,7 +96,7 @@ var sentimentList = [
 							                "user_id": row.key.user,
 							                "text": row.key.text,
 							                "sentiment": row.key.sentiment,
-							                "created_at": row.key.created_at 
+							                "created_at": row.key.created_at
 							            }
 							        }
 							        featureList_unimelb.push(feature)
@@ -106,7 +105,7 @@ var sentimentList = [
 							        "type": "FeatureCollection",
 							        "features": featureList_unimelb
 							    }
-							    // plotting GeoJSON points on maps 
+							    // plotting GeoJSON points on maps
 							    map.on('load', function () {
 							        map.addLayer({
 							            "id": "unimelb_layer",
@@ -143,7 +142,7 @@ var sentimentList = [
 							                "user_id": row.key.user,
 							                "text": row.key.text,
 							                "sentiment": row.key.sentiment,
-							                "created_at": row.key.created_at 
+							                "created_at": row.key.created_at
 							            }
 							        }
 							        featureList_rmit.push(feature)
@@ -153,8 +152,8 @@ var sentimentList = [
 							        "type": "FeatureCollection",
 							        "features": featureList_rmit
 							    }
-							    
-							    // plotting GeoJSON points on maps 
+
+							    // plotting GeoJSON points on maps
 							    map.on('load', function () {
 
 							        map.addLayer({
@@ -193,7 +192,7 @@ var sentimentList = [
 							                "user_id": row.key.user,
 							                "text": row.key.text,
 							                "sentiment": row.key.sentiment,
-							                "created_at": row.key.created_at 
+							                "created_at": row.key.created_at
 							            }
 							        }
 							        featureList_monash.push(feature)
@@ -202,7 +201,7 @@ var sentimentList = [
 							        "type": "FeatureCollection",
 							        "features": featureList_monash
 							    }
-							    // plotting GeoJSON points on maps 
+							    // plotting GeoJSON points on maps
 							    map.on('load', function () {
 							        map.addLayer({
 							            "id": "monash_layer",
@@ -239,7 +238,7 @@ var sentimentList = [
 							                "user_id": row.key.user,
 							                "text": row.key.text,
 							                "sentiment": row.key.sentiment,
-							                "created_at": row.key.created_at 
+							                "created_at": row.key.created_at
 							            }
 							        }
 							        featureList_monash_caulfield.push(feature)
@@ -248,7 +247,7 @@ var sentimentList = [
 							        "type": "FeatureCollection",
 							        "features": featureList_monash_caulfield
 							    }
-							    // plotting GeoJSON points on maps 
+							    // plotting GeoJSON points on maps
 							    map.on('load', function () {
 							        map.addLayer({
 							            "id": "monash_caulfield_layer",
@@ -272,7 +271,7 @@ var sentimentList = [
 							        });
 							    });
 //////////////////////////////////////////////////////////////////////////////////
-								// layer 4: Swinburne 
+								// layer 4: Swinburne
 								let featureList_swinburne = []
 							    swinburne_data.rows.forEach(function(row){
 							        var feature = {
@@ -285,7 +284,7 @@ var sentimentList = [
 							                "user_id": row.key.user,
 							                "text": row.key.text,
 							                "sentiment": row.key.sentiment,
-							                "created_at": row.key.created_at 
+							                "created_at": row.key.created_at
 							            }
 							        }
 							        featureList_swinburne.push(feature)
@@ -294,7 +293,7 @@ var sentimentList = [
 							        "type": "FeatureCollection",
 							        "features": featureList_swinburne
 							    }
-							    // plotting GeoJSON points on maps 
+							    // plotting GeoJSON points on maps
 							    map.on('load', function () {
 							        map.addLayer({
 							            "id": "swinburne_layer",
@@ -318,7 +317,7 @@ var sentimentList = [
 							        });
 							    });
 //////////////////////////////////////////////////////////////////////////////////
-								// layer 5: Vic Uni 
+								// layer 5: Vic Uni
 								let featureList_vic_uni = []
 							    vic_uni_data.rows.forEach(function(row){
 							        var feature = {
@@ -331,7 +330,7 @@ var sentimentList = [
 							                "user_id": row.key.user,
 							                "text": row.key.text,
 							                "sentiment": row.key.sentiment,
-							                "created_at": row.key.created_at 
+							                "created_at": row.key.created_at
 							            }
 							        }
 							        featureList_vic_uni.push(feature)
@@ -340,7 +339,7 @@ var sentimentList = [
 							        "type": "FeatureCollection",
 							        "features": featureList_vic_uni
 							    }
-							    // plotting GeoJSON points on maps 
+							    // plotting GeoJSON points on maps
 							    map.on('load', function () {
 							        map.addLayer({
 							            "id": "vic_uni_layer",
@@ -364,7 +363,7 @@ var sentimentList = [
 							        });
 							    });
 //////////////////////////////////////////////////////////////////////////////////
-								// layer 6: Latrobe Uni 
+								// layer 6: Latrobe Uni
 								let featureList_latrobe_uni = []
 							    latrobe_uni_data.rows.forEach(function(row){
 							        var feature = {
@@ -377,7 +376,7 @@ var sentimentList = [
 							                "user_id": row.key.user,
 							                "text": row.key.text,
 							                "sentiment": row.key.sentiment,
-							                "created_at": row.key.created_at 
+							                "created_at": row.key.created_at
 							            }
 							        }
 							        featureList_latrobe_uni.push(feature)
@@ -386,7 +385,7 @@ var sentimentList = [
 							        "type": "FeatureCollection",
 							        "features": featureList_latrobe_uni
 							    }
-							    // plotting GeoJSON points on maps 
+							    // plotting GeoJSON points on maps
 							    map.on('load', function () {
 							        map.addLayer({
 							            "id": "latrobe_uni_layer",
@@ -410,7 +409,7 @@ var sentimentList = [
 							        });
 							    });
 //////////////////////////////////////////////////////////////////////////////////
-								// layer 7: Deakin Uni 
+								// layer 7: Deakin Uni
 								let featureList_deakin_uni = []
 							    deakin_uni_data.rows.forEach(function(row){
 							        var feature = {
@@ -423,7 +422,7 @@ var sentimentList = [
 							                "user_id": row.key.user,
 							                "text": row.key.text,
 							                "sentiment": row.key.sentiment,
-							                "created_at": row.key.created_at 
+							                "created_at": row.key.created_at
 							            }
 							        }
 							        featureList_deakin_uni.push(feature)
@@ -432,7 +431,7 @@ var sentimentList = [
 							        "type": "FeatureCollection",
 							        "features": featureList_deakin_uni
 							    }
-							    // plotting GeoJSON points on maps 
+							    // plotting GeoJSON points on maps
 							    map.on('load', function () {
 							        map.addLayer({
 							            "id": "deakin_uni_layer",

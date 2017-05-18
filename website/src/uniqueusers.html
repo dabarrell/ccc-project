@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COMP90024 - Team 33</title>
+
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/datepicker3.min.css" rel="stylesheet">
+<link href="css/styles.min.css" rel="stylesheet">
+<link href="css/d3styles.min.css" rel="stylesheet">
+<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<!--Icons-->
+<script src="js/lumino.glyphs.js"></script>
+
+<!--D3-->
+<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+<script src="js/d3charts.js"></script>
+
+<!--[if lt IE 9]>
+<script src="js/html5shiv.js"></script>
+<script src="js/respond.min.js"></script>
+<![endif]-->
+
+</head>
+
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">COMP90024 <span>Team</span>33</a>
+
+			</div>
+
+		</div><!-- /.container-fluid -->
+	</nav>
+
+	<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+		<form role="search">
+			<div class="form-group">
+				<input type="text" class="form-control" placeholder="Search">
+			</div>
+		</form>
+		<ul class="nav menu">
+			<li><a href="index.html">Overview</a></li>
+			<li><a href="sentimentmap.html">Sentiment Map of Non-English Tweets</a></li>
+			<li class="active"><a href="uniqueusers.html">Unique Users</a></li>
+			<li><a href="unis.html">Universities</a></li>
+			<li><a href="communities.html">Communities</a></li>
+			<!-- <li><a href="langsentiment.html">Language Sentiments</a></li> -->
+			<li role="presentation" class="divider"></li>
+			<li><a href="team.html">Team</a></li>
+			<li><a href="https://github.com/dabarrell/ccc-project">Github Repository</a></li>
+		</ul>
+		<div class="attribution">Template by <a href="http://www.medialoot.com/item/lumino-admin-bootstrap-template/">Medialoot</a><br/><a href="http://www.glyphs.co" style="color: #333;">Icons by Glyphs</a></div>
+	</div><!--/.sidebar-->
+
+	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+		<div class="row">
+			<ol class="col-sm-12 breadcrumb">
+				<li><a href="#"><svg class="glyph stroked home"><use xlink:href="#stroked-home"></use></svg></a></li>
+				<li class="active">Unique Users</li>
+			</ol>
+		</div><!--/.row-->
+
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">Unique Users from Non-English Tweets</h1>
+			</div>
+		</div><!--/.row-->
+
+    <div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+					<!-- <div class="panel-heading">Unique Users</div> -->
+					<div class="panel-body map-container">
+						<div class="filters">
+							<input id="community_filter" type="text" name="community" placeholder="Language">
+							<input id="btn" type="button" value="Filter" />
+						</div>
+						<div id="uniqueusers" class="col-centered"></div>
+					</div>
+				</div>
+			</div>
+		</div><!--/.row-->
+
+	</div>	<!--/.main-->
+
+
+	<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.css' rel='stylesheet' />
+	<script>
+
+		!function ($) {
+		    $(document).on("click","ul.nav li.parent > a > span.icon", function(){
+		        $(this).find('em:first').toggleClass("glyphicon-minus");
+		    });
+		    $(".sidebar span.icon").find('em:first').addClass("glyphicon-plus");
+		}(window.jQuery);
+
+		$(window).on('resize', function () {
+		  if ($(window).width() > 768) $('#sidebar-collapse').collapse('show')
+		})
+		$(window).on('resize', function () {
+		  if ($(window).width() <= 767) $('#sidebar-collapse').collapse('hide')
+		})
+
+	let uniqueusers_url = "http://***REMOVED***@115.146.87.112:5984/processed_tweet_db/_design/unique-users/_view/new-view?group_level=4&reduce=true"
+	var languages = {
+	  "English": "en",
+	  "Arabic":	"ar",
+	  "Bengali":	"bn",
+	  "Czech":	"cs",
+	  "Danish":	"da",
+	  "German":	"de",
+	  "Greek":	"el",
+	  "Spanish":	"es",
+	  "Persian":	"fa",
+	  "Finnish":	"fi",
+	  "Filipino":	"fil",
+	  "French":	"fr",
+	  "Hebrew":	"he",
+	  "Hindi":	"hi",
+	  "Hungarian":	"hu",
+	  "Indonesian":	"id",
+	  "Italian":	"it",
+	  "Japanese":	"ja",
+	  "Korean":	"ko",
+	  "Malay": "msa",
+	  "Dutch":	"nl",
+	  "Norwegian":	"no",
+	  "Polish":	"pl",
+	  "Portuguese":	"pt",
+	  "Romanian":	"ro",
+	  "Russian":	"ru",
+	  "Swedish":	"sv",
+	  "Thai":	"th",
+	  "Turkish":	"tr",
+	  "Ukrainian":	"uk",
+	  "Urdu":	"ur",
+	  "Vietnamese":	"vi",
+	  "Chinese": "",
+	  "Chinese (Simplified)":	"zh-cn",
+	  "Chinese (Traditional)": "zh-tw"
+	};
+
+	// Views:
+	// for_visualization: any tweet has point coordinates and polarity
+	// community-langs: any tweet has an assigned community_lang
+
+	$.get(uniqueusers_url, function(couchData){
+
+	    // console.log(couchData);
+
+	    // access token to mapbox
+	    mapboxgl.accessToken = 'pk.eyJ1IjoiYmRhbmcxIiwiYSI6ImNqMmVzOTl1bzA3c2oycWx2bXQ5d3BkYW0ifQ.eMCcDItwOxuOwjazCFCyZQ';
+
+	    // Define a map
+	    var map = new mapboxgl.Map({
+	        container: 'uniqueusers', // container id
+	        style: 'mapbox://styles/mapbox/light-v9', //stylesheet location
+					center: [133.77, -29.27], // [144.98, -37.79], // starting position
+					bearing: 0,
+					zoom: 3.5 // starting zoom
+	    });
+
+	    // Add zoom and rotation controls to the map.
+	    map.addControl(new mapboxgl.NavigationControl());
+
+	    // Add FullScreen view
+	    map.addControl(new mapboxgl.FullscreenControl());
+
+	    let featureList = [];
+
+	    couchData.rows.forEach(function(row){
+	        var feature = {
+	            "type": "Feature",
+	            "geometry":{
+	                "type": "Point",
+	                "coordinates": row.key[1]
+	            },
+	            "properties":{
+	                "user_id": row.key[0],
+	                "avg_sentiment": row.key[2],
+	                "community_lang": row.key[3],
+	                "tweets": row.value
+	            }
+	        };
+	        featureList.push(feature);
+	    });
+
+	    var geoJson = {
+	        "type": "FeatureCollection",
+	        "features": featureList
+	    }
+
+
+	    // source: http://htmlcolorcodes.com/color-chart/
+	    var sentimentColor = [
+	        [-1, '#b71c1c'],
+	        [-0.75, '#d32f2f'],
+	        [-0.5, '#f44336'],
+	        [-0.25, '#e57373'],
+	        [0, '#b3e5fc'],
+	        [0.25, '#4fc3f7'],
+	        [0.5,'#03a9f4'],
+	        [0.75,'#0288d1'],
+	        [1,'#01579b' ]
+	    ];
+
+	    var communityColor = [
+	        ['ar', '#DC7633'], //2124
+	        // ["bg",], //1
+	        ['ca','#A1F4BB'], //89
+	        // ["cs",], //45
+	        // ["cy",], //11
+	        ['da', '#edbb99'], //321
+	        ['de', '#FF0000'], //2100
+	        // ["el",], //100
+	        ['es','#800000'], //11429
+	        ['et', '#fad7a0'], //154
+	        // ["eu",], //1
+	        // ["fa",], //8
+	        ['fi','#a9dfbf'], //622
+	        // ["fil",], //22
+	        ['fr','#0000FF'], //12023
+	        // ["ga",], //1
+	        // ["gl",], //13
+	        // ["hi",], //46
+	        ['ht','#f5cba7'], //138
+	        // ["hu",], //84
+	        ['id','#800080'], //2512
+	        ['in','#800080'], //1484
+	        // ["is",], //11
+	        ['it','#000080'], //3506
+	        // ["iw",], //9
+	        ['ja','#b3e5fc'], //10176
+	        // ["kn",], //1
+	        ['ko','#D7BDE2'], //511
+	        // ["lo",], //15
+	        // ["lt",], //6
+	        // ["lv",], //35
+	        // ["mi",], //1
+	        // ["ml",], //7
+	        // ["msa",], //17
+	        // ["nb",], //2
+	        // ["ne",], //8
+	        ['nl','#808000'], //1153
+	        ['no','#D4E6F1'], //222
+	        // ["pa",], //2
+	        ['pl','#FEF5E7'], //205
+	        ['pt','#00FF00'], //7695
+	        // ["pt-PT",], //1
+	        // ["ro",], //32
+	        ['ru','#FF00FF'], //2046
+	        // ["Select Language...",], //404
+	        // ["si",], //1
+	        // ["sk",], //18
+	        // ["sl",], //43
+	        // ["sr",], //5
+	        ['sv','#F6DDCC'], //516
+	        // ["ta",], //2
+	        ['th','#808080'], //2369
+	        ['tl','#1ABC9C'], //522
+	        ['tr','#008080'], //1560
+	        // ["uk",], //3
+	        ['vi','#FEDCBA'], //54
+	        ['xx-lc','#C0C0C0'], //2553
+	        ['zh','#FFFF00'], //273
+	        ['zh-cn','#FFFF00'], //1067
+	        ['zh-CN','#FFFF00'], //92
+	        ['zh-Hans','#FFFF00'], //234
+	        ['zh-Hant','#FFFF00'], //15
+	        ['zh-HK','#FFFF00'], //75
+	        ['zh-tw','#FFFF00'], //514
+	        ['zh-TW','#FFFF00'] //28
+	    ];
+
+	    // plotting GeoJSON points on maps
+	    map.on('load', function () {
+
+	        map.addSource('geoJson', { type: 'geojson', data: geoJson });
+	        map.addLayer({
+	            "id": "communities",
+	            "type": "circle",
+	            "source": "geoJson",
+	            "paint":{
+	                'circle-radius': {
+	                    'base': 1.75,
+	                    'stops': [[12, 2], [22, 20]]
+	                },
+	                'circle-color': {
+	                    property: "community_lang",
+	                    type: "categorical",
+	                    stops: communityColor
+	                },
+	                'circle-opacity': 0.7
+	            }
+	        });
+
+
+	    });
+	    // When a click event occurs near a place, open a popup at the location of
+	    // the feature, with HTML description from its properties
+	    map.on('click', function(e) {
+	        var features = map.queryRenderedFeatures(e.point, { layers: ['communities'] });
+
+	        // if the features have no info, return nothing
+	        if (!features.length) {
+	            return;
+	        }
+
+	        var feature = features[0];
+
+	        // Populate the popup and set its coordinates
+	        // based on the feature found
+	        var popup = new mapboxgl.Popup()
+	            .setLngLat(feature.geometry.coordinates)
+	            .setHTML(
+	                '<div id="popup" class="popup" style="z-index: 10;"> <h5> Detail: </h5>' +
+	                '<ul class="list-group">' +
+	                '<li class="list-group-item"> User        : ' + feature.properties['user_id'] + " </li>" +
+	                '<li class="list-group-item"> # tweets    : ' + feature.properties['tweets'] + " </li>" +
+	                '<li class="list-group-item"> Avg Sentiment : ' + feature.properties['avg_sentiment'] + " </li>" +
+	                '<li class="list-group-item"> Language    : ' + feature.properties['community_lang'] + " </li>" + '</ul> </div>')
+	            .addTo(map);
+	    });
+
+	    // Use the same approach as above to indicate that the symbols are clickable
+	    // by changing the cursor style to 'pointer'
+	    map.on('mousemove', function(e) {
+	        var features = map.queryRenderedFeatures(e.point, { layers: ['communities'] });
+	        map.getCanvas().style.cursor = 'pointer';
+	    });
+
+	    $('#community_filter').keydown(function(e){
+	        if(e.keyCode == 13)
+	        {
+	            updateFilter();
+	        }
+	    });
+
+	    $('#btn').click(function() {
+	        updateFilter();
+	    });
+
+	    function updateFilter() {
+	          var comm = $('#community_filter').val().trim();
+	          sourceData = Object.assign({}, geoJson);
+	          if (comm == 'Chinese') {
+	            sourceData.features = sourceData.features.filter(function (el) {
+	              return el.properties.community_lang.indexOf('zh') == 0;
+	            });
+	          } else if (comm != '') {
+	            sourceData.features = sourceData.features.filter(function (el) {
+	              return el.properties.community_lang == languages[comm];
+	            });
+	          };
+
+	          map.getSource('geoJson').setData(sourceData);
+	    };
+	});
+
+	$( function() {
+	  $( "#community_filter" ).autocomplete({
+	    source: Object.keys(languages)
+	  });
+	} );
+	</script>
+</body>
+
+</html>

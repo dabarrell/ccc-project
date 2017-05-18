@@ -10,7 +10,6 @@
 <link href="css/styles.min.css" rel="stylesheet">
 <link href="css/d3styles.min.css" rel="stylesheet">
 <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
-
 <script src="js/jquery-3.2.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -46,21 +45,21 @@
 		</div><!-- /.container-fluid -->
 	</nav>
 
-	<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+  <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
 		<form role="search">
 			<div class="form-group">
 				<input type="text" class="form-control" placeholder="Search">
 			</div>
 		</form>
 		<ul class="nav menu">
-			<li class="active"><a href="index.html">Overview</a></li>
+			<li><a href="index.html">Overview</a></li>
 			<li><a href="sentimentmap.html">Sentiment Map of Non-English Tweets</a></li>
 			<li><a href="uniqueusers.html">Unique Users</a></li>
 			<li><a href="unis.html">Universities</a></li>
-			<li><a href="communities.html">Communities</a></li>
+      <li><a href="communities.html">Communities</a></li>
 			<!-- <li><a href="langsentiment.html">Language Sentiments</a></li> -->
 			<li role="presentation" class="divider"></li>
-			<li><a href="team.html">Team</a></li>
+			<li class="active"><a href="team.html">Team</a></li>
 			<li><a href="https://github.com/dabarrell/ccc-project">Github Repository</a></li>
 		</ul>
 		<div class="attribution">Template by <a href="http://www.medialoot.com/item/lumino-admin-bootstrap-template/">Medialoot</a><br/><a href="http://www.glyphs.co" style="color: #333;">Icons by Glyphs</a></div>
@@ -70,68 +69,40 @@
 		<div class="row">
 			<ol class="col-sm-12 breadcrumb">
 				<li><a href="#"><svg class="glyph stroked home"><use xlink:href="#stroked-home"></use></svg></a></li>
-				<li class="active">Overview</li>
+				<li class="active">Team</li>
 			</ol>
 		</div><!--/.row-->
 
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header">Twitter Analysis Overview</h1>
-			</div>
-		</div><!--/.row-->
-
-		<div class="row" style="margin-bottom: 20px">
-			<div class="col-xs-12 col-md-4">
-				<div class="panel panel-blue panel-widget row no-padding">
-						<div class="col-sm-3 col-lg-5 widget-left">
-							<svg class="glyph stroked empty-message"><use xlink:href="#stroked-empty-message"></use></svg>
-						</div>
-						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">593k</div>
-							<div class="text-muted">Translated tweets</div>
-						</div>
-				</div>
-			</div>
-			<div class="col-xs-12 col-md-4">
-				<div class="panel panel-orange panel-widget row no-padding">
-						<div class="col-sm-3 col-lg-5 widget-left">
-							<svg class="glyph stroked empty-message"><use xlink:href="#stroked-empty-message"></use></svg>
-						</div>
-						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">5.4m</div>
-							<div class="text-muted">Tweets</div>
-						</div>
-				</div>
-			</div>
-			<div class="col-xs-12 col-md-4">
-				<div class="panel panel-teal panel-widget row no-padding">
-						<div class="col-sm-3 col-lg-5 widget-left">
-							<svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg>
-						</div>
-						<div class="col-sm-9 col-lg-7 widget-right">
-							<div class="large">3.5m</div>
-							<div class="text-muted">Unique Users</div>
-						</div>
-				</div>
+				<h1 class="page-header">Team 33</h1>
 			</div>
 		</div><!--/.row-->
 
 		<div class="row">
-			<div class="col-lg-12">
+			<div class="col-lg-5">
 				<div class="panel panel-default">
-					<div class="panel-heading">Tweets by State (millions)</div>
+					<div class="panel-body" style="height: 530px; padding: 50px">
+						<p>
+							David Barrell<br />
+							Steve Dang<br />
+							Bobby Koteski<br />
+							Annie Zhou<br />
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-7">
+				<div class="panel panel-default">
 					<div class="panel-body">
-						<div id="tooltip"></div>
-						<div id="ausmap" class="col-centered"></div>
+						<img src="img/team.jpg" alt="Team 33" style="height:500px; margin: auto;">
 					</div>
 				</div>
 			</div>
 		</div><!--/.row-->
-	</div>	<!--/.main-->
 
-	<script>
-		uStates.draw("#ausmap");
-	</script>
+	</div>	<!--/.main-->
 
 </body>
 
