@@ -1,3 +1,6 @@
+#  COMP90024 Project - Team 33
+#  David Barrell (520704), Bobby Koteski (696567), Steve Dang (807773)
+
 import os
 import json
 from tempfile import NamedTemporaryFile
@@ -66,19 +69,8 @@ class Options(object):
 
 
 class ResultCallback(CallbackModule):
-    """A sample callback plugin used for performing an action as results come in
-
-    If you want to collect all results into a single object for processing at
-    the end of the execution, look into utilizing the ``json`` callback plugin
-    or writing your own custom callback plugin
-    """
     def v2_runner_on_ok(self, result, **kwargs):
-        """Print a json representation of the result
-
-        This method could store the result in an instance attribute for retrieval later
-        """
         host = result._host
-        # print(json.dumps({host.name: result._result}, indent=4))
         super(ResultCallback, self).v2_runner_on_ok(result)
 
     def v2_runner_on_failed(self, result, ignore_errors=False):
@@ -138,8 +130,3 @@ def runPlaybook(hosts, playbook, tags=[], private_key_file=private_key_file):
     except KeyError:
         out = 'Unrecognised error code'
     return result, out
-
-if __name__ == '__main__':
-    runPlaybook(['115.146.89.125'],
-                '/Users/david/Workspace/uni/CCC/ccc-project/automation/playbook/playbook.yml',
-                tags=['harvester'])

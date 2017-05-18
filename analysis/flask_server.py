@@ -1,3 +1,5 @@
+#  COMP90024 Project - Team 33
+#  David Barrell (520704), Bobby Koteski (696567), Steve Dang (807773)
 
 import json
 from flask import Flask

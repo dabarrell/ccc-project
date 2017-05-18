@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+#  COMP90024 Project - Team 33
+#  David Barrell (520704), Bobby Koteski (696567), Steve Dang (807773)
+
 import boto
 import time
 import paramiko

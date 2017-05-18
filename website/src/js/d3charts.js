@@ -1,3 +1,6 @@
+// <!-- COMP90024 Project - Team 33-->
+// <!-- David Barrell (520704), Bobby Koteski (696567), Steve Dang (807773)-->
+
 (function() {
     var uStates = {};
 
@@ -161,5 +164,12 @@
 
     }
     this.barChart = barChart;
+
+    var sentChart = {}
+
+    sentChart.draw = function(id, data) {
+
+    }
+    this.sentChart = sentChart;
 
 })();

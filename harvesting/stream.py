@@ -1,6 +1,5 @@
-'''
-python stream.py --ckey ***REMOVED*** --csecret ***REMOVED*** --atoken ***REMOVED*** --asecret ***REMOVED*** --host localhost --port 5984 --member admin --pw hwal7DxBJE --dbname tweets --debug
-'''
+#  COMP90024 Project - Team 33
+#  David Barrell (520704), Bobby Koteski (696567), Steve Dang (807773)
 
 import tweepy
 import json

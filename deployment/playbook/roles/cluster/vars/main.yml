@@ -1,6 +1,9 @@
+#  COMP90024 Project - Team 33
+#  David Barrell (520704), Bobby Koteski (696567), Steve Dang (807773)
+
 ---
-admin_user: admin
-admin_pass: ***REMOVED***
+admin_user: ****
+admin_pass: ****
 
 couchdb_databases:
   _global_changes:

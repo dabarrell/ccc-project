@@ -1,18 +1,13 @@
+#  COMP90024 Project - Team 33
+#  David Barrell (520704), Bobby Koteski (696567), Steve Dang (807773)
+
 ---
-admin_user: admin
-admin_pass: ***REMOVED***
+admin_user: ****
+admin_pass: ****
 
 scripts_dir: /home/ubuntu/harvester/src
 keys:
-  - ckey: ***REMOVED***
-    csecret: ***REMOVED***
-    atoken: ***REMOVED***
-    asecret: ***REMOVED***
-  - ckey: ***REMOVED***
-    csecret: ***REMOVED***
-    atoken: ***REMOVED***
-    asecret: ***REMOVED***
-  - ckey: ***REMOVED***
-    csecret: ***REMOVED***
-    atoken: ***REMOVED***
-    asecret: ***REMOVED***
+  - ckey: ****
+    csecret: ****
+    atoken: ****
+    asecret: ****

@@ -1,3 +1,6 @@
+// COMP90024 Project - Team 33
+// David Barrell (520704), Bobby Koteski (696567), Steve Dang (807773)
+
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var browserSync = require('browser-sync').create();

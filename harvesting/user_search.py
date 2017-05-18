@@ -1,16 +1,21 @@
+#  COMP90024 Project - Team 33
+#  David Barrell (520704), Bobby Koteski (696567), Steve Dang (807773)
+
 import tweepy
 import json
 import time
+
+
 import couchdb
 
 # Twitter API authentication details.
-consumer_key = '***REMOVED***'
-consumer_secret = '***REMOVED***'
-access_token = '***REMOVED***'
-access_token_secret = '***REMOVED***'
+consumer_key = '****'
+consumer_secret = '****'
+access_token = '****'
+access_token_secret = '****'
 
-member = 'admin'
-pw = '***REMOVED***'
+member = '****'
+pw = '****'
 host = 'localhost'
 port = 5984
 debug = True

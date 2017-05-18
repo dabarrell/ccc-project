@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 '''
-Author: bdang1@student.unimelb.edu.au
+David Barrell (520704), Bobby Koteski (696567), Steve Dang (807773)
 Update the community_lang field from langugage code to readable name
 e.g: 'zh' -> 'Chinese'
 '''

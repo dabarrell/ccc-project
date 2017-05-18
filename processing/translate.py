@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 '''
-Author: bdang1@student.unimelb.edu.au
+David Barrell (520704), Bobby Koteski (696567), Steve Dang (807773)
 Read tweets from a view, translate with Google API and save it back to the same Couchdb
 '''
 # +----------------------------------------------------------------------+

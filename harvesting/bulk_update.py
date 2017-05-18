@@ -1,8 +1,7 @@
-'''
-author: bobby koteski - 15/04/2017
-script reads a large tweet file and pushes the tweets to a 
-couchdb database.
-'''
+#  COMP90024 Project - Team 33
+#  David Barrell (520704), Bobby Koteski (696567), Steve Dang (807773)
+#  script reads a large tweet file and pushes the tweets to a
+#  couchdb database.
 
 import couchdb
 import sys, json

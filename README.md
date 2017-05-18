@@ -69,5 +69,6 @@ so you may have to navigate to the relevant file manually.
 ## Authors
 - David Barrell ([Github](https://github.com/dabarrell/))
 - Bobby Koteski ([Github](https://github.com/bkot88))
-- Annie Zhou ([Github](https://github.com/anya-z))
 - Steve Dang ([Github](https://github.com/thanhdang1109))
+- Annie Zhou ([Github](https://github.com/anya-z))
+
